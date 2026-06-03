@@ -1,96 +1,113 @@
-import { GraduationCap, Calendar, MapPin } from 'lucide-react';
+import { GraduationCap, MapPin, Calendar, BookOpen } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+
+const educations = [
+  {
+    degree: 'Intelligence Artificielle & Stratégie des Affaires',
+    school: 'Swiss UMEF Campus Dakar',
+    period: '2024 — En cours',
+    status: 'En cours',
+    statusColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
+    gradient: 'from-violet-500 to-cyan-500',
+    border: 'border-violet-500/20',
+    description: 'Formation spécialisée combinant les compétences techniques en IA avec une compréhension stratégique du monde des affaires.',
+    subjects: ['Machine Learning', 'Data Science', 'Stratégie d\'entreprise', 'Transformation digitale', 'Cybersécurité'],
+  },
+  {
+    degree: 'Génie Logiciel & Bases de données',
+    school: 'Formation initiale',
+    period: '2023 — 2024',
+    status: 'Complétée',
+    statusColor: 'text-gray-400 bg-white/5 border-white/10',
+    gradient: 'from-gray-500 to-gray-700',
+    border: 'border-white/10',
+    description: 'Première année d\'études en génie logiciel qui m\'a permis d\'acquérir des bases solides en développement et gestion de données.',
+    subjects: ['Programmation', 'Bases de données', 'SQL', 'Modélisation', 'Architecture logicielle'],
+  },
+];
 
 export default function Education() {
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: 0.1 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
+  }, []);
+
   return (
-    <section
-      id="education"
-      className="py-20 bg-gray-50 dark:bg-gray-900 transition-colors"
-    >
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white text-center mb-12">
-          Parcours académique
-        </h2>
+    <section id="education" className="py-24 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-950/5 to-transparent pointer-events-none" />
+      <div ref={ref} className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="space-y-8">
-          {/* Carte 1 */}
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-            <div className="flex items-start">
-              <div className="bg-blue-600 p-4 rounded-lg mr-6">
-                <GraduationCap className="text-white" size={32} />
-              </div>
+        <div className={`text-center mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          <div className="section-tag mx-auto w-fit mb-4">Formation</div>
+          <h2 className="text-4xl sm:text-5xl font-bold text-white">
+            Parcours <span className="gradient-text">académique</span>
+          </h2>
+        </div>
 
-              <div className="flex-1">
-                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Intelligence Artificielle & Stratégie des Affaires
-                </h3>
+        {/* Timeline */}
+        <div className="relative">
+          {/* Vertical line */}
+          <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-violet-500/50 via-cyan-500/30 to-transparent hidden sm:block" />
 
-                <div className="flex flex-wrap gap-4 mb-4">
-                  <div className="flex items-center text-gray-600 dark:text-gray-300">
-                    <MapPin size={18} className="mr-2" />
-                    <span>Swiss UMEF Campus Dakar</span>
-                  </div>
-                  <div className="flex items-center text-gray-600 dark:text-gray-300">
-                    <Calendar size={18} className="mr-2" />
-                    <span>Première année (en cours)</span>
-                  </div>
-                </div>
+          <div className="space-y-8">
+            {educations.map((edu, i) => (
+              <div
+                key={edu.degree}
+                className={`relative transition-all duration-700`}
+                style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateX(0)' : 'translateX(-30px)', transitionDelay: `${200 + i * 150}ms` }}
+              >
+                {/* Timeline dot */}
+                <div className={`absolute left-4 top-6 w-4 h-4 rounded-full bg-gradient-to-br ${edu.gradient} border-2 border-[#030712] hidden sm:block z-10`} />
 
-                <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
-                  Formation spécialisée combinant les compétences techniques en intelligence
-                  artificielle avec une compréhension stratégique du monde des affaires.
-                  Cette filière me permet de développer une vision holistique de la transformation
-                  numérique des entreprises.
-                </p>
+                <div className={`sm:ml-16 glass-card rounded-2xl border ${edu.border} overflow-hidden`}>
+                  {/* Top accent */}
+                  <div className={`h-1 bg-gradient-to-r ${edu.gradient}`} />
 
-                <div className="bg-blue-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <p className="text-sm text-gray-700 dark:text-gray-200">
-                    <strong>Domaines d'études :</strong> Machine Learning, Data Science,
-                    Stratégie d'entreprise, Transformation digitale, Réseaux et systèmes,
-                    Cybersécurité
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
+                  <div className="p-6 sm:p-8">
+                    <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+                      <div className="flex items-start gap-4">
+                        <div className={`p-3 rounded-xl bg-gradient-to-br ${edu.gradient} bg-opacity-20 flex-shrink-0`}>
+                          <GraduationCap size={24} className="text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg sm:text-xl font-bold text-white mb-1">{edu.degree}</h3>
+                          <div className="flex flex-wrap gap-3 text-sm text-gray-400">
+                            <span className="flex items-center gap-1">
+                              <MapPin size={14} className="text-gray-500" />
+                              {edu.school}
+                            </span>
+                            <span className="flex items-center gap-1">
+                              <Calendar size={14} className="text-gray-500" />
+                              {edu.period}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${edu.statusColor}`}>
+                        {edu.status}
+                      </span>
+                    </div>
 
-          {/* Carte 2 */}
-          <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow-md hover:shadow-lg transition-shadow border-l-4 border-gray-300 dark:border-gray-600">
-            <div className="flex items-start">
-              <div className="bg-gray-600 p-4 rounded-lg mr-6">
-                <GraduationCap className="text-white" size={32} />
-              </div>
+                    <p className="text-gray-400 leading-relaxed mb-5">{edu.description}</p>
 
-              <div className="flex-1">
-                <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-2">
-                  Génie Logiciel & Bases de données
-                </h3>
-
-                <div className="flex flex-wrap gap-4 mb-4">
-                  <div className="flex items-center text-gray-600 dark:text-gray-300">
-                    <MapPin size={18} className="mr-2" />
-                    <span>Formation initiale</span>
-                  </div>
-                  <div className="flex items-center text-gray-600 dark:text-gray-300">
-                    <Calendar size={18} className="mr-2" />
-                    <span>Première année (complétée)</span>
+                    <div className="flex items-start gap-3">
+                      <BookOpen size={16} className="text-gray-500 mt-0.5 flex-shrink-0" />
+                      <div className="flex flex-wrap gap-2">
+                        {edu.subjects.map((s) => (
+                          <span key={s} className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 border border-white/8 text-gray-300">
+                            {s}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
                   </div>
                 </div>
-
-                <p className="text-gray-700 dark:text-gray-200 leading-relaxed mb-3">
-                  Première année d'études en génie logiciel et bases de données, qui m'a permis
-                  d'acquérir des bases solides en développement logiciel et gestion de données.
-                  Cette expérience a consolidé mes compétences techniques avant ma réorientation
-                  vers l'intelligence artificielle.
-                </p>
-
-                <div className="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
-                  <p className="text-sm text-gray-700 dark:text-gray-200">
-                    <strong>Compétences acquises :</strong> Programmation, Conception de bases
-                    de données, SQL, Modélisation, Architecture logicielle
-                  </p>
-                </div>
               </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

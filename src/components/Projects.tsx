@@ -1,107 +1,159 @@
-import { Code, Database, Shield, Network } from 'lucide-react';
+import { ExternalLink, Github, Code2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
+const projects = [
+  {
+    emoji: '📅',
+    title: 'Planification de Révision',
+    description: 'Application Python qui génère des plannings de révision personnalisés. Gestion intelligente des matières, délais et sessions d\'étude optimisées selon les priorités.',
+    tech: ['Python', 'Algorithmes', 'CLI'],
+    gradient: 'from-amber-500 to-orange-600',
+    border: 'hover:border-amber-500/40',
+    glow: 'hover:shadow-amber-500/10',
+    link: 'https://github.com/BiraneThiam2/planification-revision',
+  },
+  {
+    emoji: '🛍️',
+    title: 'E-commerce Parfums',
+    description: 'Site web de vente en ligne dédié aux parfums. Interface élégante avec catalogue produits, système de panier et gestion des commandes.',
+    tech: ['HTML/CSS', 'JavaScript', 'E-commerce'],
+    gradient: 'from-pink-500 to-rose-600',
+    border: 'hover:border-pink-500/40',
+    glow: 'hover:shadow-pink-500/10',
+    link: 'https://github.com/BiraneThiam2/ecommerce-parfum',
+  },
+  {
+    emoji: '🤖',
+    title: 'Chatbot IA',
+    description: 'Assistant intelligent développé en Python, capable de comprendre et répondre aux questions grâce à des algorithmes de traitement du langage naturel.',
+    tech: ['Python', 'NLP', 'IA'],
+    gradient: 'from-violet-500 to-purple-700',
+    border: 'hover:border-violet-500/40',
+    glow: 'hover:shadow-violet-500/10',
+    link: 'https://github.com/BiraneThiam2/chatbot-ia',
+  },
+  {
+    emoji: '💬',
+    title: 'Chat Client-Serveur',
+    description: 'Application de messagerie en temps réel basée sur une architecture client-serveur Python avec sockets réseau, permettant des communications multi-utilisateurs.',
+    tech: ['Python', 'Sockets', 'Réseau'],
+    gradient: 'from-emerald-500 to-teal-600',
+    border: 'hover:border-emerald-500/40',
+    glow: 'hover:shadow-emerald-500/10',
+    link: 'https://github.com/BiraneThiam2/chat-client-serveur',
+  },
+  {
+    emoji: '🎮',
+    title: 'Tic-Tac-Toe',
+    description: 'Jeu de morpion interactif développé en JavaScript avec une interface moderne et épurée, incluant une logique de jeu fluide et un mode deux joueurs.',
+    tech: ['JavaScript', 'HTML/CSS', 'Logique de jeu'],
+    gradient: 'from-sky-500 to-blue-600',
+    border: 'hover:border-sky-500/40',
+    glow: 'hover:shadow-sky-500/10',
+    link: 'https://github.com/BiraneThiam2/tic-tac-toe',
+  },
+];
+
 export default function Projects() {
-  const [isVisible, setIsVisible] = useState(false);
-  const sectionRef = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          observer.unobserve(entry.target);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
+    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: 0.05 });
+    if (ref.current) obs.observe(ref.current);
+    return () => obs.disconnect();
   }, []);
 
-  const projects = [
-    {
-      icon: Code,
-      title: 'Projets Python',
-      description: 'Mini-projets et exercices de programmation en Python pour développer mes compétences en algorithmique et manipulation de données',
-      technologies: ['Python', 'Algorithmes'],
-      category: 'Programmation',
-    },
-    {
-      icon: Network,
-      title: 'Études de cas - Réseaux',
-      description: 'Analyse et conception de réseaux informatiques, étude des protocoles et des architectures réseau',
-      technologies: ['Réseaux', 'Protocoles', 'Architecture'],
-      category: 'Réseaux',
-    },
-    {
-      icon: Shield,
-      title: 'Projets en Cybersécurité',
-      description: 'Exploration des concepts fondamentaux de la sécurité informatique et des bonnes pratiques de protection des systèmes',
-      technologies: ['Sécurité', 'Cryptographie', 'Protection'],
-      category: 'Sécurité',
-    },
-    {
-      icon: Database,
-      title: 'Projets Bases de données',
-      description: 'Conception et manipulation de bases de données, requêtes SQL et modélisation de données',
-      technologies: ['SQL', 'Modélisation', 'Bases de données'],
-      category: 'Data',
-    },
-  ];
-
   return (
-    <section id="projects" className="py-20 bg-white dark:bg-gray-900 transition-colors">
-      <div ref={sectionRef} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h2 className={`text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white text-center mb-4 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          Projets
-        </h2>
-        <p className={`text-center text-gray-600 dark:text-gray-400 mb-12 max-w-2xl mx-auto transition-all duration-700 delay-100 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
-          Découvrez mes projets académiques et personnels qui reflètent mon apprentissage
-          et mon évolution dans le domaine de la technologie
-        </p>
+    <section id="projects" className="py-24 relative">
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-pink-950/5 to-transparent pointer-events-none" />
+      <div ref={ref} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
 
-        <div className="grid md:grid-cols-2 gap-8">
-          {projects.map((project, index) => (
-            <div
-              key={project.title}
-              className={`bg-gradient-to-br from-gray-50 to-blue-50 dark:from-gray-800 dark:to-gray-700 p-6 rounded-lg shadow-md hover:shadow-xl transition-all hover:scale-105 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
-              style={{ transitionDelay: isVisible ? `${200 + index * 100}ms` : '0ms' }}
-            >
-              <div className="bg-blue-600 dark:bg-blue-700 w-14 h-14 rounded-lg flex items-center justify-center mb-4">
-                <project.icon className="text-white" size={28} />
-              </div>
+        <div className={`text-center mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
+          <div className="section-tag mx-auto w-fit mb-4">Projets</div>
+          <h2 className="text-4xl sm:text-5xl font-bold text-white">
+            Ce que j'ai <span className="gradient-text">construit</span>
+          </h2>
+          <p className="text-gray-400 mt-4 max-w-xl mx-auto">
+            Projets personnels et académiques qui reflètent mon évolution et ma passion pour la technologie.
+          </p>
+        </div>
 
-              <span className="inline-block px-3 py-1 bg-blue-100 dark:bg-blue-900 text-blue-700 dark:text-blue-300 text-sm rounded-full mb-3">
-                {project.category}
-              </span>
-
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                {project.title}
-              </h3>
-
-              <p className="text-gray-700 dark:text-gray-300 mb-4 leading-relaxed">
-                {project.description}
-              </p>
-
-              <div className="flex flex-wrap gap-2">
-                {project.technologies.map((tech) => (
-                  <span
-                    key={tech}
-                    className="px-3 py-1 bg-white dark:bg-gray-600 text-gray-700 dark:text-gray-300 text-sm rounded-md shadow-sm"
-                  >
-                    {tech}
-                  </span>
-                ))}
-              </div>
-            </div>
+        {/* Grid: 3 on top, 2 centered below */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+          {projects.slice(0, 3).map((p, i) => (
+            <ProjectCard key={p.title} project={p} visible={visible} delay={100 + i * 100} />
+          ))}
+        </div>
+        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto lg:max-w-none lg:grid-cols-2 lg:px-[16.67%]">
+          {projects.slice(3).map((p, i) => (
+            <ProjectCard key={p.title} project={p} visible={visible} delay={400 + i * 100} />
           ))}
         </div>
       </div>
     </section>
+  );
+}
+
+function ProjectCard({ project: p, visible, delay }: { project: typeof projects[0]; visible: boolean; delay: number }) {
+  return (
+    <div
+      className={`group relative glass-card rounded-2xl overflow-hidden border border-white/5 ${p.border} ${p.glow} hover:shadow-2xl transition-all duration-300`}
+      style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(30px)', transition: `all 0.6s ease ${delay}ms` }}
+    >
+      {/* Top gradient bar */}
+      <div className={`h-1 w-full bg-gradient-to-r ${p.gradient}`} />
+
+      <div className="p-6">
+        {/* Icon + tag row */}
+        <div className="flex items-center justify-between mb-4">
+          <span className="text-3xl">{p.emoji}</span>
+          <div className="flex items-center gap-1 px-2 py-1 rounded-md bg-white/5 border border-white/5">
+            <Code2 size={12} className="text-gray-500" />
+            <span className="text-xs text-gray-500">{p.tech[0]}</span>
+          </div>
+        </div>
+
+        {/* Title */}
+        <h3 className="text-lg font-bold text-white mb-2 group-hover:text-transparent group-hover:bg-clip-text group-hover:bg-gradient-to-r group-hover:from-white group-hover:to-gray-300 transition-all">
+          {p.title}
+        </h3>
+
+        {/* Description */}
+        <p className="text-gray-400 text-sm leading-relaxed mb-5">
+          {p.description}
+        </p>
+
+        {/* Tech tags */}
+        <div className="flex flex-wrap gap-2 mb-5">
+          {p.tech.map((t) => (
+            <span key={t} className={`px-2.5 py-1 rounded-full text-xs font-medium bg-gradient-to-r ${p.gradient} bg-opacity-10 text-white/80 border border-white/10`}>
+              {t}
+            </span>
+          ))}
+        </div>
+
+        {/* Action buttons */}
+        <div className="flex gap-3 pt-2 border-t border-white/5">
+          <a
+            href={p.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r ${p.gradient} hover:opacity-90 hover:scale-105 transition-all duration-200`}
+          >
+            <ExternalLink size={14} />
+            Voir le projet
+          </a>
+          <a
+            href={p.link}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 glass hover:text-white transition-all"
+          >
+            <Github size={14} />
+          </a>
+        </div>
+      </div>
+    </div>
   );
 }

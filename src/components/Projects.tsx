@@ -1,4 +1,4 @@
-import { ExternalLink, Github, Code2 } from 'lucide-react';
+import { ExternalLink, Github, Code2, FileText } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 
 const projects = [
@@ -10,7 +10,8 @@ const projects = [
     gradient: 'from-amber-500 to-orange-600',
     border: 'hover:border-amber-500/40',
     glow: 'hover:shadow-amber-500/10',
-    link: 'https://github.com/BiraneThiam2/planification-revision',
+    link: 'https://github.com/BiraneThiam2/Planning-de-revision',
+    githubLink: 'https://github.com/BiraneThiam2/Planning-de-revision',
   },
   {
     emoji: '🛍️',
@@ -20,7 +21,8 @@ const projects = [
     gradient: 'from-pink-500 to-rose-600',
     border: 'hover:border-pink-500/40',
     glow: 'hover:shadow-pink-500/10',
-    link: 'https://github.com/BiraneThiam2/ecommerce-parfum',
+    link: 'https://github.com/BiraneThiam2/luxury',
+    githubLink: 'https://github.com/BiraneThiam2/luxury',
   },
   {
     emoji: '🤖',
@@ -30,7 +32,8 @@ const projects = [
     gradient: 'from-violet-500 to-purple-700',
     border: 'hover:border-violet-500/40',
     glow: 'hover:shadow-violet-500/10',
-    link: 'https://github.com/BiraneThiam2/chatbot-ia',
+    link: 'https://github.com/BiraneThiam2/Chatboot-IA',
+    githubLink: 'https://github.com/BiraneThiam2/Chatboot-IA',
   },
   {
     emoji: '💬',
@@ -40,7 +43,8 @@ const projects = [
     gradient: 'from-emerald-500 to-teal-600',
     border: 'hover:border-emerald-500/40',
     glow: 'hover:shadow-emerald-500/10',
-    link: 'https://github.com/BiraneThiam2/chat-client-serveur',
+    link: 'https://github.com/BiraneThiam2/Chat-Python',
+    githubLink: 'https://github.com/BiraneThiam2/Chat-Python',
   },
   {
     emoji: '🎮',
@@ -50,7 +54,31 @@ const projects = [
     gradient: 'from-sky-500 to-blue-600',
     border: 'hover:border-sky-500/40',
     glow: 'hover:shadow-sky-500/10',
-    link: 'https://github.com/BiraneThiam2/tic-tac-toe',
+    link: 'https://github.com/BiraneThiam2/projet-tic-tac-toe',
+    githubLink: 'https://github.com/BiraneThiam2/projet-tic-tac-toe',
+  },
+  {
+    emoji: '📁',
+    title: 'Organisateur de Fichiers',
+    description: 'Script Python qui automatise l\'organisation de fichiers en les classant par type, extension ou date. Nettoie et structure un dossier encombré en quelques secondes.',
+    tech: ['Python', 'OS', 'Automatisation'],
+    gradient: 'from-blue-500 to-indigo-600',
+    border: 'hover:border-blue-500/40',
+    glow: 'hover:shadow-blue-500/10',
+    link: 'https://github.com/BiraneThiam2/Organisateur-de-fichier',
+    githubLink: 'https://github.com/BiraneThiam2/Organisateur-de-fichier',
+    buttonLabel: 'Voir le projet',
+  },
+  {
+    emoji: '📊',
+    title: 'Dashboard Performances Commerciales',
+    description: 'Analyse complète des performances commerciales réalisée avec Power BI. Visualisations interactives des KPIs clés, tendances de ventes et indicateurs de performance.',
+    tech: ['Power BI', 'Data Viz', 'Business Intelligence'],
+    gradient: 'from-yellow-500 to-amber-600',
+    border: 'hover:border-yellow-500/40',
+    glow: 'hover:shadow-yellow-500/10',
+    link: '/dashboard-performances.pdf',
+    buttonLabel: 'Voir le rapport',
   },
 ];
 
@@ -79,15 +107,20 @@ export default function Projects() {
           </p>
         </div>
 
-        {/* Grid: 3 on top, 2 centered below */}
+        {/* Grid: 3 on top, then 2+2 centered below */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
           {projects.slice(0, 3).map((p, i) => (
             <ProjectCard key={p.title} project={p} visible={visible} delay={100 + i * 100} />
           ))}
         </div>
-        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto lg:max-w-none lg:grid-cols-2 lg:px-[16.67%]">
-          {projects.slice(3).map((p, i) => (
+        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto lg:max-w-none lg:grid-cols-2 lg:px-[16.67%] mb-6">
+          {projects.slice(3, 5).map((p, i) => (
             <ProjectCard key={p.title} project={p} visible={visible} delay={400 + i * 100} />
+          ))}
+        </div>
+        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto lg:max-w-none lg:grid-cols-2 lg:px-[16.67%]">
+          {projects.slice(5).map((p, i) => (
+            <ProjectCard key={p.title} project={p} visible={visible} delay={600 + i * 100} />
           ))}
         </div>
       </div>
@@ -142,16 +175,22 @@ function ProjectCard({ project: p, visible, delay }: { project: typeof projects[
             className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold text-white bg-gradient-to-r ${p.gradient} hover:opacity-90 hover:scale-105 transition-all duration-200`}
           >
             <ExternalLink size={14} />
-            Voir le projet
+            {p.buttonLabel ?? 'Voir le projet'}
           </a>
-          <a
-            href={p.link}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 glass hover:text-white transition-all"
-          >
-            <Github size={14} />
-          </a>
+          {p.githubLink ? (
+            <a
+              href={p.githubLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-400 glass hover:text-white transition-all"
+            >
+              <Github size={14} />
+            </a>
+          ) : (
+            <div className="flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-medium text-gray-600 glass">
+              <FileText size={14} />
+            </div>
+          )}
         </div>
       </div>
     </div>

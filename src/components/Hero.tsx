@@ -48,7 +48,7 @@ export default function Hero() {
         {/* Stats */}
         <div className="animate-fade-in-3 flex justify-center gap-8 sm:gap-16 mb-12">
           {[
-            { value: '5', label: 'Projets' },
+            { value: '+5', label: 'Projets' },
             { value: '2+', label: "Ans d'études" },
             { value: 'Dakar', label: 'Sénégal' },
           ].map((s) => (
@@ -88,7 +88,7 @@ export default function Hero() {
             <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
           </button>
           <a
-            href="/cv.pdf"
+            href="/CV_ElHadjiBiraneCisseThiam.pdf"
             download="CV_ElHadjiBiraneCisseThiam.pdf"
             className="group flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass text-gray-300 hover:text-white hover:border-violet-500/40 font-semibold transition-all duration-200"
           >

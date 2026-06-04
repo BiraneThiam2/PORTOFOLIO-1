@@ -1,11 +1,24 @@
-import { GraduationCap, MapPin, Calendar, BookOpen } from 'lucide-react';
+import { GraduationCap, MapPin, Calendar, BookOpen, Award, ExternalLink } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
+
+const certifications = [
+  {
+    title: 'Meta Front-End Developer',
+    issuer: 'Meta · Coursera',
+    period: '2024 — 7 mois',
+    gradient: 'from-blue-500 to-indigo-500',
+    border: 'border-blue-500/20',
+    pdfPath: '/meta-frontend-developer.pdf',
+    skills: ['HTML/CSS', 'JavaScript', 'React', 'Git/GitHub', 'UI/UX Design', 'Jest'],
+    description: 'Certification professionnelle obtenue après 7 mois de formation intensive (6h/semaine). Projet final : développement d\'une application complète de A à Z.',
+  },
+];
 
 const educations = [
   {
     degree: 'Intelligence Artificielle & Stratégie des Affaires',
     school: 'Swiss UMEF Campus Dakar',
-    period: '2024 — En cours',
+    period: '2025 — En cours',
     status: 'En cours',
     statusColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
     gradient: 'from-violet-500 to-cyan-500',
@@ -16,7 +29,7 @@ const educations = [
   {
     degree: 'Génie Logiciel & Bases de données',
     school: 'Formation initiale',
-    period: '2023 — 2024',
+    period: '2024 — 2025',
     status: 'Complétée',
     statusColor: 'text-gray-400 bg-white/5 border-white/10',
     gradient: 'from-gray-500 to-gray-700',
@@ -110,6 +123,70 @@ export default function Education() {
             ))}
           </div>
         </div>
+
+        {/* Certifications */}
+        <div className={`mt-16 transition-all duration-700`} style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transitionDelay: '600ms' }}>
+          <div className="flex items-center gap-3 mb-6">
+            <Award size={20} className="text-blue-400" />
+            <h3 className="text-xl font-bold text-white">Certifications</h3>
+          </div>
+
+          <div className="space-y-4">
+            {certifications.map((cert) => (
+              <a
+                key={cert.title}
+                href={cert.pdfPath}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`block glass-card rounded-2xl border ${cert.border} overflow-hidden hover:border-blue-500/50 transition-all duration-300 group`}
+              >
+                <div className={`h-1 bg-gradient-to-r ${cert.gradient}`} />
+                <div className="p-6 sm:p-8">
+                  <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
+                    <div className="flex items-start gap-4">
+                      <div className={`p-3 rounded-xl bg-gradient-to-br ${cert.gradient} bg-opacity-20 flex-shrink-0`}>
+                        <Award size={24} className="text-white" />
+                      </div>
+                      <div>
+                        <div className="flex items-center gap-2">
+                          <h4 className="text-lg sm:text-xl font-bold text-white mb-1 group-hover:text-blue-300 transition-colors">{cert.title}</h4>
+                          <ExternalLink size={14} className="text-gray-500 group-hover:text-blue-400 transition-colors mb-1" />
+                        </div>
+                        <div className="flex flex-wrap gap-3 text-sm text-gray-400">
+                          <span className="flex items-center gap-1">
+                            <MapPin size={14} className="text-gray-500" />
+                            {cert.issuer}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Calendar size={14} className="text-gray-500" />
+                            {cert.period}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <span className="px-3 py-1 rounded-full text-xs font-semibold border text-blue-400 bg-blue-500/10 border-blue-500/30">
+                      Certifiée
+                    </span>
+                  </div>
+
+                  <p className="text-gray-400 leading-relaxed mb-5">{cert.description}</p>
+
+                  <div className="flex items-start gap-3">
+                    <BookOpen size={16} className="text-gray-500 mt-0.5 flex-shrink-0" />
+                    <div className="flex flex-wrap gap-2">
+                      {cert.skills.map((s) => (
+                        <span key={s} className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 border border-white/8 text-gray-300">
+                          {s}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+
       </div>
     </section>
   );

@@ -51,7 +51,7 @@ export default function Contact() {
       icon: FileText,
       label: 'Mon CV',
       value: 'Télécharger mon CV (PDF)',
-      href: '/cv.pdf',
+      href: '/CV_ElHadjiBiraneCisseThiam.pdf',
       color: 'text-pink-400',
       bg: 'bg-pink-500/10 border-pink-500/20',
       download: 'CV_ElHadjiBiraneCisseThiam.pdf',

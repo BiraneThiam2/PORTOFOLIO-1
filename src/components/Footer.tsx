@@ -14,11 +14,6 @@ export default function Footer() {
             EBCT
           </button>
 
-          {/* Credit */}
-          <p className="text-gray-500 text-sm flex items-center gap-1.5">
-            Fait avec <Heart size={14} className="text-pink-500" fill="currentColor" /> par El Hadji Birane Cisse Thiam
-          </p>
-
           {/* Social links */}
           <div className="flex items-center gap-3">
             <a href="mailto:biranethiam916@gmail.com"

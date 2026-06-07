@@ -2,17 +2,31 @@
 
 Portfolio personnel développé avec React, TypeScript et Tailwind CSS. Design dark moderne avec glassmorphism, animations et effets néon.
 
+![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=flat&logo=typescript&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/TailwindCSS-3.4-06B6D4?style=flat&logo=tailwindcss&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-5.4-646CFF?style=flat&logo=vite&logoColor=white)
+
+---
+
 ## Aperçu
 
 Site vitrine présentant mon profil, mes compétences et mes projets personnels. L'interface mise sur un impact visuel immédiat : fond sombre animé, dégradés violet/cyan, cartes en verre et transitions fluides.
 
-## Technologies
+---
 
-- **React 18** + **TypeScript**
-- **Tailwind CSS** — design utilitaire
-- **Vite** — bundler rapide
-- **Lucide React** — icônes
-- **Space Grotesk** — typographie (Google Fonts)
+## Stack technique
+
+| Outil | Rôle |
+|---|---|
+| React 18 + TypeScript | UI et logique des composants |
+| Tailwind CSS | Design utilitaire |
+| Vite | Bundler et dev server |
+| Supabase | Backend du formulaire de contact |
+| Lucide React | Icônes |
+| Space Grotesk | Typographie (Google Fonts) |
+
+---
 
 ## Fonctionnalités
 
@@ -21,28 +35,37 @@ Site vitrine présentant mon profil, mes compétences et mes projets personnels.
 - Orbs gradient animées en arrière-plan
 - Cartes glassmorphism avec glow néon au survol
 - Barres de compétences avec animation d'entrée et effet shimmer
-- 5 cartes projets cliquables (redirection GitHub)
+- 9 cartes projets cliquables (liens GitHub)
+- Dashboard Power BI intégré (PDF)
 - Timeline de formation
-- Formulaire de contact avec confirmation
-- Animations scroll-triggered (IntersectionObserver)
+- Formulaire de contact connecté à Supabase
+- Animations scroll-triggered via IntersectionObserver
 - 100% responsive mobile
+
+---
 
 ## Projets présentés
 
 | Projet | Technologie | Lien |
 |---|---|---|
-| Planification de Révision | Python | [github.com/BiraneThiam2/planification-revision](https://github.com/BiraneThiam2/planification-revision) |
-| E-commerce Parfums | HTML/CSS/JS | [github.com/BiraneThiam2/ecommerce-parfum](https://github.com/BiraneThiam2/ecommerce-parfum) |
-| Chatbot IA | Python / NLP | [github.com/BiraneThiam2/chatbot-ia](https://github.com/BiraneThiam2/chatbot-ia) |
-| Chat Client-Serveur | Python / Sockets | [github.com/BiraneThiam2/chat-client-serveur](https://github.com/BiraneThiam2/chat-client-serveur) |
-| Tic-Tac-Toe | JavaScript | [github.com/BiraneThiam2/tic-tac-toe](https://github.com/BiraneThiam2/tic-tac-toe) |
+| Planification de Révision | Python | [github.com/BiraneThiam2/Planning-de-revision](https://github.com/BiraneThiam2/Planning-de-revision) |
+| E-commerce Parfums | HTML/CSS/JS | [github.com/BiraneThiam2/luxury](https://github.com/BiraneThiam2/luxury) |
+| Chatbot IA | Python / NLP | [github.com/BiraneThiam2/Chatboot-IA](https://github.com/BiraneThiam2/Chatboot-IA) |
+| Chat Client-Serveur | Python / Sockets | [github.com/BiraneThiam2/Chat-Python](https://github.com/BiraneThiam2/Chat-Python) |
+| Tic-Tac-Toe | JavaScript | [github.com/BiraneThiam2/projet-tic-tac-toe](https://github.com/BiraneThiam2/projet-tic-tac-toe) |
+| Organisateur de Fichiers | Python | [github.com/BiraneThiam2/Organisateur-de-fichier](https://github.com/BiraneThiam2/Organisateur-de-fichier) |
+| Dashboard Performances | Power BI | PDF local |
+| Assistant Matinal | Python | [github.com/BiraneThiam2/assistant-matinal](https://github.com/BiraneThiam2/assistant-matinal) |
+| Portfolio Personnel | React / TypeScript | [github.com/BiraneThiam2/Portofolio](https://github.com/BiraneThiam2/Portofolio) |
+
+---
 
 ## Installation
 
 ```bash
 # Cloner le dépôt
-git clone https://github.com/BiraneThiam2/portfolio.git
-cd portfolio
+git clone https://github.com/BiraneThiam2/Portofolio.git
+cd Portofolio
 
 # Installer les dépendances
 npm install
@@ -60,7 +83,9 @@ npm run build
 npm run preview
 ```
 
-Les fichiers générés se trouvent dans le dossier `dist/`.
+Les fichiers générés se trouvent dans `dist/`.
+
+---
 
 ## Structure du projet
 
@@ -71,42 +96,29 @@ src/
 │   ├── Hero.tsx        # Section d'accueil plein écran
 │   ├── About.tsx       # Présentation avec photo
 │   ├── Skills.tsx      # Compétences avec barres animées
-│   ├── Projects.tsx    # 5 cartes projets avec liens
+│   ├── Projects.tsx    # 9 cartes projets avec liens GitHub
 │   ├── Education.tsx   # Parcours académique (timeline)
 │   ├── Goals.tsx       # Objectifs professionnels
-│   ├── Contact.tsx     # Formulaire de contact
+│   ├── Contact.tsx     # Formulaire de contact (Supabase)
 │   └── Footer.tsx      # Pied de page
 ├── App.tsx             # Racine + orbs d'arrière-plan
 ├── index.css           # Styles globaux, utilitaires, animations
 └── main.tsx            # Point d'entrée React
 ```
 
+---
+
 ## Personnalisation
 
-### Mettre à jour les liens de projets
+**Mettre à jour les projets** — modifier le tableau `projects` dans [src/components/Projects.tsx](src/components/Projects.tsx).
 
-Dans [src/components/Projects.tsx](src/components/Projects.tsx), modifier le champ `link` de chaque projet avec l'URL réelle du dépôt ou de la démo.
+**Informations de contact** — Email et liens sociaux dans `Hero.tsx`, `Contact.tsx`, `Header.tsx` et `Footer.tsx`.
 
-### Changer les informations de contact
+**CV** — placer le fichier PDF dans `public/cv.pdf`. Le bouton "Mon CV" déclenchera le téléchargement automatiquement.
 
-- Email : `Hero.tsx` et `Contact.tsx`
-- GitHub : `Header.tsx`, `Hero.tsx`, `Contact.tsx`, `Footer.tsx`
-- LinkedIn : même fichiers
+**Photo de profil** — remplacer `b.jpeg` à la racine et mettre à jour la référence dans `About.tsx`.
 
-### Ajouter son CV
-
-Placer le fichier PDF du CV dans le dossier `public/` en le nommant `cv.pdf` :
-
-```
-public/
-└── cv.pdf
-```
-
-Le bouton "Mon CV" dans le Hero et le lien dans Contact déclencheront automatiquement le téléchargement sous le nom `CV_ElHadjiBiraneCisseThiam.pdf`.
-
-### Photo de profil
-
-Remplacer le fichier `b.jpeg` à la racine du projet par votre photo, puis mettre à jour la référence dans `About.tsx`.
+---
 
 ## Auteur
 

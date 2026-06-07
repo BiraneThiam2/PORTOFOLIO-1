@@ -89,7 +89,7 @@ const projects = [
     border: 'hover:border-orange-500/40',
     glow: 'hover:shadow-orange-500/10',
     link: 'https://github.com/BiraneThiam2/assistant-matinal',
-    githubLink: 'https://github.com/BiraneThiam2/assistant-matinal',
+    githubLink: 'https://github.com/BiraneThiam2/Assistant-Matinale',
   },
   {
     emoji: '🌐',
@@ -100,7 +100,7 @@ const projects = [
     border: 'hover:border-cyan-500/40',
     glow: 'hover:shadow-cyan-500/10',
     link: 'https://github.com/BiraneThiam2/Portofolio',
-    githubLink: 'https://github.com/BiraneThiam2/Portofolio',
+    githubLink: 'https://github.com/BiraneThiam2/PORTOFOLIO-1',
   },
 ];
 

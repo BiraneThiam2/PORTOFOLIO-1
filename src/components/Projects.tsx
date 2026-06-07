@@ -80,6 +80,28 @@ const projects = [
     link: '/dashboard-performances.pdf',
     buttonLabel: 'Voir le rapport',
   },
+  {
+    emoji: '🌅',
+    title: 'Assistant Matinal',
+    description: 'Script Python d\'automatisation qui envoie chaque matin un email personnalisé avec la météo du jour et les tâches planifiées. Intègre l\'API OpenWeatherMap et une planification automatique via schedule.',
+    tech: ['Python', 'Automatisation', 'API REST'],
+    gradient: 'from-orange-500 to-rose-500',
+    border: 'hover:border-orange-500/40',
+    glow: 'hover:shadow-orange-500/10',
+    link: 'https://github.com/BiraneThiam2/assistant-matinal',
+    githubLink: 'https://github.com/BiraneThiam2/assistant-matinal',
+  },
+  {
+    emoji: '🌐',
+    title: 'Portfolio Personnel',
+    description: 'Ce portfolio moderne développé avec React et TypeScript. Interface animée avec dark mode, design glassmorphism, animations fluides et composants réactifs construits avec TailwindCSS.',
+    tech: ['React', 'TypeScript', 'TailwindCSS'],
+    gradient: 'from-cyan-500 to-violet-600',
+    border: 'hover:border-cyan-500/40',
+    glow: 'hover:shadow-cyan-500/10',
+    link: 'https://github.com/BiraneThiam2/Portofolio',
+    githubLink: 'https://github.com/BiraneThiam2/Portofolio',
+  },
 ];
 
 export default function Projects() {
@@ -107,20 +129,9 @@ export default function Projects() {
           </p>
         </div>
 
-        {/* Grid: 3 on top, then 2+2 centered below */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
-          {projects.slice(0, 3).map((p, i) => (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {projects.map((p, i) => (
             <ProjectCard key={p.title} project={p} visible={visible} delay={100 + i * 100} />
-          ))}
-        </div>
-        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto lg:max-w-none lg:grid-cols-2 lg:px-[16.67%] mb-6">
-          {projects.slice(3, 5).map((p, i) => (
-            <ProjectCard key={p.title} project={p} visible={visible} delay={400 + i * 100} />
-          ))}
-        </div>
-        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto lg:max-w-none lg:grid-cols-2 lg:px-[16.67%]">
-          {projects.slice(5).map((p, i) => (
-            <ProjectCard key={p.title} project={p} visible={visible} delay={600 + i * 100} />
           ))}
         </div>
       </div>

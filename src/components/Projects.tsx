@@ -88,7 +88,7 @@ const projects = [
     gradient: 'from-orange-500 to-rose-500',
     border: 'hover:border-orange-500/40',
     glow: 'hover:shadow-orange-500/10',
-    link: 'https://github.com/BiraneThiam2/assistant-matinal',
+    link: 'https://github.com/BiraneThiam2/Assistant-Matinale',
     githubLink: 'https://github.com/BiraneThiam2/Assistant-Matinale',
   },
   {
@@ -99,7 +99,7 @@ const projects = [
     gradient: 'from-cyan-500 to-violet-600',
     border: 'hover:border-cyan-500/40',
     glow: 'hover:shadow-cyan-500/10',
-    link: 'https://github.com/BiraneThiam2/Portofolio',
+    link: 'https://github.com/BiraneThiam2/PORTOFOLIO-1',
     githubLink: 'https://github.com/BiraneThiam2/PORTOFOLIO-1',
   },
 ];

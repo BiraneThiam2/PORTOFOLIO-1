@@ -24,19 +24,19 @@ const transversal = [
 function SkillBar({ icon: Icon, name, pct, color, visible, delay }: { icon: React.ElementType; name: string; pct: number; color: string; visible: boolean; delay: number }) {
   return (
     <div
-      className={`glass-card rounded-xl p-4 border border-white/5 transition-all duration-700`}
+      className={`glass-card rounded-xl p-5 border border-white/10 transition-all duration-700`}
       style={{ transitionDelay: `${delay}ms`, opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)' }}
     >
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg bg-gradient-to-br ${color} bg-opacity-20`}>
-            <Icon size={16} className="text-white" />
+      <div className="flex items-center justify-between gap-3 mb-3.5">
+        <div className="flex items-center gap-3.5 min-w-0">
+          <div className={`shrink-0 p-2.5 rounded-lg bg-gradient-to-br ${color}`}>
+            <Icon size={18} className="text-white" />
           </div>
-          <span className="text-sm font-medium text-gray-200">{name}</span>
+          <span className="text-base font-semibold text-white tracking-tight">{name}</span>
         </div>
-        <span className="text-xs font-bold text-gray-400">{pct}%</span>
+        <span className="shrink-0 text-sm font-bold text-white tabular-nums">{pct}%</span>
       </div>
-      <div className="h-1.5 rounded-full bg-white/5 overflow-hidden">
+      <div className="h-2.5 rounded-full bg-white/10 overflow-hidden">
         <div
           className={`h-full rounded-full bg-gradient-to-r ${color} skill-bar-fill transition-all duration-1000`}
           style={{ width: visible ? `${pct}%` : '0%', transitionDelay: `${delay + 200}ms` }}
@@ -75,7 +75,7 @@ export default function Skills() {
               <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
                 <Code size={20} className="text-violet-400" />
               </div>
-              <h3 className="text-xl font-semibold text-white">Compétences techniques</h3>
+              <h3 className="text-2xl font-bold text-white tracking-tight">Compétences techniques</h3>
             </div>
             <div className="space-y-3">
               {technical.map((s, i) => (
@@ -90,7 +90,7 @@ export default function Skills() {
               <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
                 <Briefcase size={20} className="text-cyan-400" />
               </div>
-              <h3 className="text-xl font-semibold text-white">Compétences transversales</h3>
+              <h3 className="text-2xl font-bold text-white tracking-tight">Compétences transversales</h3>
             </div>
             <div className="space-y-3">
               {transversal.map((s, i) => (

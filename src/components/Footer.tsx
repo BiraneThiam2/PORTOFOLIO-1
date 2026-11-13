@@ -1,39 +1,60 @@
-import { Github, Linkedin, Mail } from 'lucide-react';
+import { ArrowUp, Command } from 'lucide-react';
+import { nav, profile } from '../data';
+import { openPalette, scrollToId } from '../lib/nav';
+import { useLang } from '../lib/i18n';
 
 export default function Footer() {
-  const scrollTop = () => window.scrollTo({ top: 0, behavior: 'smooth' });
-
+  const { t } = useLang();
   return (
-    <footer className="relative py-12 border-t border-white/5">
-      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/30 to-transparent" />
-
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-          {/* Logo */}
-          <button onClick={scrollTop} className="text-xl font-bold bg-gradient-to-r from-violet-400 to-cyan-400 bg-clip-text text-transparent hover:opacity-80 transition-opacity">
-            EBCT
-          </button>
-
-          {/* Social links */}
-          <div className="flex items-center gap-3">
-            <a href="mailto:biranethiam916@gmail.com"
-              className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all">
-              <Mail size={18} />
-            </a>
-            <a href="https://github.com/BiraneThiam2" target="_blank" rel="noopener noreferrer"
-              className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all">
-              <Github size={18} />
-            </a>
-            <a href="https://www.linkedin.com/in/el-hadji-birane-cisse-thiam-1917a9336/" target="_blank" rel="noopener noreferrer"
-              className="p-2 rounded-lg text-gray-500 hover:text-white hover:bg-white/5 transition-all">
-              <Linkedin size={18} />
-            </a>
+    <footer className="relative overflow-hidden border-t border-line/10 pt-20">
+      <div className="container-x">
+        <div className="grid gap-10 sm:grid-cols-3">
+          <div>
+            <div className="label mb-4">{t('footer.nav')}</div>
+            <ul className="space-y-2">
+              {nav.map((n) => (
+                <li key={n.id}>
+                  <button onClick={() => scrollToId(n.id)} className="text-muted transition-colors hover:text-ink">
+                    {t(n.key)}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <div className="label mb-4">{t('footer.social')}</div>
+            <ul className="space-y-2">
+              <li><a href={profile.github} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-ink">GitHub ↗</a></li>
+              <li><a href={profile.linkedin} target="_blank" rel="noopener noreferrer" className="text-muted transition-colors hover:text-ink">LinkedIn ↗</a></li>
+              <li><a href={`mailto:${profile.email}`} className="text-muted transition-colors hover:text-ink">Email ↗</a></li>
+              <li><a href={profile.cv} download={profile.cvName} className="text-muted transition-colors hover:text-ink">{t('hero.cv')} (PDF) ↓</a></li>
+            </ul>
+          </div>
+          <div className="flex flex-col items-start gap-4 sm:items-end">
+            <button
+              onClick={() => scrollToId('top')}
+              className="group grid h-14 w-14 place-items-center rounded-full bg-accent text-[#111]"
+              aria-label={t('nav.top')}
+            >
+              <ArrowUp className="transition-transform duration-300 group-hover:-translate-y-1" />
+            </button>
+            <button onClick={openPalette} className="hidden items-center gap-2 font-mono text-xs text-muted hover:text-ink sm:flex">
+              {t('footer.tip1')} <span className="chip gap-1"><Command size={11} /> K</span> {t('footer.tip2')}
+            </button>
           </div>
         </div>
+      </div>
 
-        <div className="text-center mt-8 text-gray-600 text-xs">
-          © {new Date().getFullYear()} — Tous droits réservés
-        </div>
+      <div
+        className="mt-16 select-none whitespace-nowrap text-center text-[17.5vw] font-semibold leading-[0.8] tracking-[-0.05em] text-line/[0.07]"
+        aria-hidden="true"
+      >
+        Birane<span className="font-serif font-normal italic">Thiam</span>
+      </div>
+
+      <div className="container-x flex flex-col items-center justify-between gap-2 border-t border-line/10 py-6 font-mono text-xs text-muted sm:flex-row">
+        <span>© {new Date().getFullYear()} {profile.firstName} {profile.lastName}</span>
+        <span>{t('footer.made')}</span>
       </div>
     </footer>
   );

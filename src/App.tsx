@@ -1,36 +1,54 @@
+import { useEffect } from 'react';
+import About from './components/About';
+import CaseStudy from './components/CaseStudy';
+import CommandPalette from './components/CommandPalette';
+import Contact from './components/Contact';
+import Cursor from './components/Cursor';
+import Education from './components/Education';
+import Footer from './components/Footer';
+import GithubActivity from './components/GithubActivity';
 import Header from './components/Header';
 import Hero from './components/Hero';
-import About from './components/About';
-import Skills from './components/Skills';
+import Marquee from './components/Marquee';
 import Projects from './components/Projects';
-import Education from './components/Education';
-import Goals from './components/Goals';
-import Contact from './components/Contact';
-import Footer from './components/Footer';
+import Skills from './components/Skills';
+import Vision from './components/Vision';
+import { useLang } from './lib/i18n';
+import { scrollToId } from './lib/nav';
 
-function App() {
+export default function App() {
+  const { t } = useLang();
+
+  // Liens directs (/#projects…) : défile vers la section une fois le rendu terminé
+  useEffect(() => {
+    const id = window.location.hash.slice(1);
+    if (id && !id.startsWith('projet/')) requestAnimationFrame(() => scrollToId(id));
+  }, []);
+
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-[#030712] text-slate-900 dark:text-white overflow-x-hidden transition-colors duration-300">
-      {/* Animated background orbs */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none z-0">
-        <div className="absolute top-1/4 -left-40 w-[500px] h-[500px] bg-violet-700/20 dark:bg-violet-700/20 rounded-full blur-[120px] animate-orb" />
-        <div className="absolute top-2/3 -right-40 w-[500px] h-[500px] bg-cyan-500/10 dark:bg-cyan-500/15 rounded-full blur-[120px] animate-orb-reverse" />
-        <div className="absolute bottom-1/3 left-1/3 w-[300px] h-[300px] bg-pink-600/10 rounded-full blur-[100px] animate-float-slow" />
-      </div>
-
-      <div className="relative z-10">
-        <Header />
+    <div className="relative min-h-screen overflow-x-clip bg-bg text-ink">
+      <a
+        href="#about"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-full focus:bg-accent focus:px-4 focus:py-2 focus:text-[#111]"
+      >
+        {t('nav.skip')}
+      </a>
+      <Cursor />
+      <CommandPalette />
+      <CaseStudy />
+      <Header />
+      <main>
         <Hero />
+        <Marquee />
         <About />
         <Skills />
         <Projects />
+        <GithubActivity />
         <Education />
-        <Goals />
+        <Vision />
         <Contact />
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </div>
   );
 }
-
-export default App;

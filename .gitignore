@@ -21,3 +21,9 @@ dist-ssr
 *.sln
 *.sw?
 .env
+# Vidéos promo (fichiers lourds)
+promo/*.mp4
+promo/source/frames/
+promo/source/encode
+promo/source/mux
+promo/source/vo/*.aiff

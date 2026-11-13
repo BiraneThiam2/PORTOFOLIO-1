@@ -1,45 +1,40 @@
-import { Code, Brain, Database, Shield, GitBranch, Terminal, Briefcase, Users, MessageSquare, TrendingUp, Lightbulb, Target } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { softSkills, technicalSkills, type Skill } from '../data';
+import { useCountUp, useInView } from '../lib/hooks';
+import { Reveal, SectionHeading } from './ui';
+import { useLang } from '../lib/i18n';
+import type { UIKey } from '../i18n/ui';
 
-const technical = [
-  { icon: Code,      name: 'Python',                 pct: 35, color: 'from-yellow-500 to-orange-500' },
-  { icon: Brain,     name: 'Intelligence Artificielle', pct: 25, color: 'from-violet-500 to-purple-600' },
-  { icon: Database,  name: 'Data & Analyse',          pct: 40, color: 'from-cyan-500 to-blue-500' },
-  { icon: Database,  name: 'Bases de données',        pct: 45, color: 'from-teal-500 to-cyan-600' },
-  { icon: Shield,    name: 'Cybersécurité',           pct: 30, color: 'from-red-500 to-pink-500' },
-  { icon: Terminal,  name: 'Réseaux informatiques',   pct: 35, color: 'from-emerald-500 to-green-600' },
-  { icon: GitBranch, name: 'Git & GitHub',            pct: 60, color: 'from-gray-400 to-gray-600' },
-  { icon: Terminal,  name: 'Linux / Windows',         pct: 50, color: 'from-blue-400 to-indigo-500' },
-];
+const tabs = [
+  { id: 'tech', label: 'skills.tech' as UIKey, skills: technicalSkills },
+  { id: 'soft', label: 'skills.soft' as UIKey, skills: softSkills },
+] as const;
 
-const transversal = [
-  { icon: Briefcase,    name: 'Stratégie des affaires',  pct: 35, color: 'from-amber-500 to-yellow-600' },
-  { icon: Lightbulb,   name: 'Résolution de problèmes', pct: 70, color: 'from-yellow-400 to-amber-500' },
-  { icon: Users,        name: 'Travail en équipe',       pct: 75, color: 'from-pink-500 to-rose-500' },
-  { icon: MessageSquare,name: 'Communication',           pct: 65, color: 'from-sky-500 to-blue-500' },
-  { icon: TrendingUp,   name: 'Apprentissage rapide',    pct: 80, color: 'from-violet-500 to-indigo-500' },
-  { icon: Target,       name: 'Esprit analytique',       pct: 75, color: 'from-cyan-500 to-teal-500' },
-];
+function SkillRow({ skill, index }: { skill: Skill; index: number }) {
+  const [ref, inView] = useInView<HTMLDivElement>(0.4);
+  const value = useCountUp(skill.pct, inView, 1200 + index * 80);
+  const Icon = skill.icon;
+  const { tr } = useLang();
 
-function SkillBar({ icon: Icon, name, pct, color, visible, delay }: { icon: React.ElementType; name: string; pct: number; color: string; visible: boolean; delay: number }) {
   return (
     <div
-      className={`glass-card rounded-xl p-5 border border-white/10 transition-all duration-700`}
-      style={{ transitionDelay: `${delay}ms`, opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(20px)' }}
+      ref={ref}
+      className="group animate-fade-up rounded-2xl border border-line/10 p-5 transition-colors duration-300 hover:border-line/30"
+      style={{ animationDelay: `${index * 60}ms` }}
     >
-      <div className="flex items-center justify-between gap-3 mb-3.5">
-        <div className="flex items-center gap-3.5 min-w-0">
-          <div className={`shrink-0 p-2.5 rounded-lg bg-gradient-to-br ${color}`}>
-            <Icon size={18} className="text-white" />
-          </div>
-          <span className="text-base font-semibold text-white tracking-tight">{name}</span>
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-line/5 transition-colors duration-300 group-hover:bg-accent group-hover:text-[#111]">
+            <Icon size={18} />
+          </span>
+          <span className="font-medium">{tr(skill.name)}</span>
         </div>
-        <span className="shrink-0 text-sm font-bold text-white tabular-nums">{pct}%</span>
+        <span className="font-mono text-sm tabular-nums text-muted">{value}%</span>
       </div>
-      <div className="h-2.5 rounded-full bg-white/10 overflow-hidden">
+      <div className="relative h-1.5 overflow-hidden rounded-full bg-line/10">
         <div
-          className={`h-full rounded-full bg-gradient-to-r ${color} skill-bar-fill transition-all duration-1000`}
-          style={{ width: visible ? `${pct}%` : '0%', transitionDelay: `${delay + 200}ms` }}
+          className="absolute inset-y-0 left-0 rounded-full bg-signal transition-[width] duration-[1400ms] ease-[cubic-bezier(.2,.8,.2,1)]"
+          style={{ width: inView ? `${skill.pct}%` : '0%', transitionDelay: `${index * 80}ms` }}
         />
       </div>
     </div>
@@ -47,57 +42,48 @@ function SkillBar({ icon: Icon, name, pct, color, visible, delay }: { icon: Reac
 }
 
 export default function Skills() {
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: 0.1 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
+  const [tab, setTab] = useState<(typeof tabs)[number]['id']>('tech');
+  const current = tabs.find((x) => x.id === tab)!;
+  const { t } = useLang();
 
   return (
-    <section id="skills" className="py-24 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-cyan-950/5 to-transparent pointer-events-none" />
-      <div ref={ref} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="skills" className="relative py-28 sm:py-36">
+      <div className="container-x">
+        <SectionHeading
+          index="02"
+          label={t('skills.label')}
+          title={
+            <>
+              {t('skills.title1')} <span className="em">{t('skills.title2')}</span>
+              {t('skills.title3')}
+            </>
+          }
+          intro={t('skills.intro')}
+        />
 
-        <div className={`text-center mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <div className="section-tag mx-auto w-fit mb-4">Compétences</div>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white">
-            Mon <span className="gradient-text">arsenal</span> de compétences
-          </h2>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-10">
-          {/* Technical */}
-          <div>
-            <div className={`flex items-center gap-3 mb-6 transition-all duration-700 delay-100 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-6'}`}>
-              <div className="p-2 rounded-lg bg-violet-500/10 border border-violet-500/20">
-                <Code size={20} className="text-violet-400" />
-              </div>
-              <h3 className="text-2xl font-bold text-white tracking-tight">Compétences techniques</h3>
-            </div>
-            <div className="space-y-3">
-              {technical.map((s, i) => (
-                <SkillBar key={s.name} {...s} visible={visible} delay={150 + i * 60} />
-              ))}
-            </div>
+        <Reveal>
+          <div className="mb-10 inline-flex rounded-full border border-line/15 p-1" role="tablist" aria-label={t('skills.tabs')}>
+            {tabs.map((x) => (
+              <button
+                key={x.id}
+                role="tab"
+                aria-selected={tab === x.id}
+                onClick={() => setTab(x.id)}
+                className={`rounded-full px-5 py-2 text-sm font-medium transition-all duration-300 ${
+                  tab === x.id ? 'bg-ink text-bg' : 'text-muted hover:text-ink'
+                }`}
+              >
+                {t(x.label)}
+                <span className="ml-2 font-mono text-[11px] opacity-60">{x.skills.length}</span>
+              </button>
+            ))}
           </div>
+        </Reveal>
 
-          {/* Transversal */}
-          <div>
-            <div className={`flex items-center gap-3 mb-6 transition-all duration-700 delay-100 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-6'}`}>
-              <div className="p-2 rounded-lg bg-cyan-500/10 border border-cyan-500/20">
-                <Briefcase size={20} className="text-cyan-400" />
-              </div>
-              <h3 className="text-2xl font-bold text-white tracking-tight">Compétences transversales</h3>
-            </div>
-            <div className="space-y-3">
-              {transversal.map((s, i) => (
-                <SkillBar key={s.name} {...s} visible={visible} delay={150 + i * 60} />
-              ))}
-            </div>
-          </div>
+        <div key={tab} className="grid gap-4 sm:grid-cols-2" role="tabpanel">
+          {current.skills.map((s, i) => (
+            <SkillRow key={s.name.fr} skill={s} index={i} />
+          ))}
         </div>
       </div>
     </section>

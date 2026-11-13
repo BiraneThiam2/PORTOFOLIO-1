@@ -1,0 +1,24 @@
+import { spawn } from 'node:child_process';
+const BIN = process.env.HOME + '/Library/Caches/ms-playwright/chromium_headless_shell-1248/chrome-headless-shell-mac-x64/chrome-headless-shell';
+const p = spawn(BIN, ['--remote-debugging-port=9336', '--force-prefers-reduced-motion', 'about:blank'], { stdio: 'ignore' });
+await new Promise(r => setTimeout(r, 1500));
+const list = await (await fetch('http://127.0.0.1:9336/json')).json();
+const ws = new WebSocket(list.find(t => t.type === 'page').webSocketDebuggerUrl);
+await new Promise(r => ws.onopen = r);
+let id = 0; const pend = {};
+ws.onmessage = e => { const m = JSON.parse(e.data); if (pend[m.id]) { pend[m.id](m.result); delete pend[m.id]; } };
+const send = (method, params = {}) => new Promise(r => { pend[++id] = r; ws.send(JSON.stringify({ id, method, params })); });
+await send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false });
+await send('Page.enable');
+await send('Page.addScriptToEvaluateOnNewDocument', { source: "localStorage.setItem('lang','fr');localStorage.setItem('theme','dark')" });
+await send('Page.navigate', { url: 'http://localhost:4789/' });
+await new Promise(r => setTimeout(r, 3000));
+const ev = async (e) => (await send('Runtime.evaluate', { expression: e, returnByValue: true })).result.value;
+const H0 = await ev('document.documentElement.scrollHeight');
+for (let y = 0; y < H0; y += 400) { await ev(`scrollTo(0,${y})`); await new Promise(r => setTimeout(r, 60)); }
+await ev('scrollTo(0,0)'); await new Promise(r => setTimeout(r, 2500));
+const r = await send('Runtime.evaluate', { expression: "JSON.stringify(['about','skills','projects','github','education','vision','contact'].map(id=>[id,Math.round(document.getElementById(id).getBoundingClientRect().top+scrollY)]).concat([['height',document.documentElement.scrollHeight]]))", returnByValue: true });
+console.log(r.result.value);
+const H = JSON.parse(r.result.value).pop()[1];
+const shot = await send('Page.captureScreenshot', { format: 'jpeg', quality: 90, captureBeyondViewport: true, clip: { x: 0, y: 0, width: 1440, height: H, scale: 1 } });
+(await import('node:fs')).writeFileSync(new URL('./assets/page-dark.jpg', import.meta.url).pathname, Buffer.from(shot.data, 'base64')); ws.close(); p.kill(); process.exit(0);

@@ -1,170 +1,222 @@
-import { Mail, Github, Linkedin, Send, MessageCircle, FileText } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
+import { AlertTriangle, ArrowUpRight, Check, Copy, Linkedin, Loader2, Send } from 'lucide-react';
+import { profile } from '../data';
+import { useDakarTime } from '../lib/hooks';
+import { useLang } from '../lib/i18n';
+import { GithubIcon, Magnetic, Reveal, SectionHeading } from './ui';
+
+/* Identifiant Formspree (ex. « xyzabcd ») défini dans le fichier .env : VITE_FORMSPREE_ID=...
+   Sans identifiant, le formulaire ouvre la messagerie du visiteur. */
+const FORMSPREE_ID = import.meta.env.VITE_FORMSPREE_ID as string | undefined;
+
+const field =
+  'peer w-full border-b border-line/20 bg-transparent pb-3 pt-6 text-lg outline-none transition-colors placeholder:text-transparent focus:border-signal';
+const floating =
+  'pointer-events-none absolute left-0 top-6 text-muted transition-all duration-300 peer-focus:top-0 peer-focus:text-xs peer-focus:text-signal peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:text-xs';
+
+type Status = 'idle' | 'sending' | 'sent' | 'mailto' | 'error';
+const empty = { name: '', email: '', subject: '', message: '', _gotcha: '' };
 
 export default function Contact() {
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-  const [form, setForm] = useState({ name: '', email: '', subject: '', message: '' });
-  const [sent, setSent] = useState(false);
+  const { t } = useLang();
+  const [form, setForm] = useState(empty);
+  const [copied, setCopied] = useState(false);
+  const [status, setStatus] = useState<Status>('idle');
+  const time = useDakarTime();
 
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: 0.1 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setSent(true);
-    setForm({ name: '', email: '', subject: '', message: '' });
-    setTimeout(() => setSent(false), 4000);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(profile.email);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      window.location.href = `mailto:${profile.email}`;
+    }
   };
 
-  const socials = [
-    {
-      icon: Mail,
-      label: 'Email',
-      value: 'biranethiam916@gmail.com',
-      href: 'mailto:biranethiam916@gmail.com',
-      color: 'text-violet-400',
-      bg: 'bg-violet-500/10 border-violet-500/20',
-    },
-    {
-      icon: Github,
-      label: 'GitHub',
-      value: 'github.com/BiraneThiam2',
-      href: 'https://github.com/BiraneThiam2',
-      color: 'text-gray-300',
-      bg: 'bg-white/5 border-white/10',
-      external: true,
-    },
-    {
-      icon: Linkedin,
-      label: 'LinkedIn',
-      value: 'El Hadji Birane Cisse Thiam',
-      href: 'https://www.linkedin.com/in/el-hadji-birane-cisse-thiam-1917a9336/',
-      color: 'text-cyan-400',
-      bg: 'bg-cyan-500/10 border-cyan-500/20',
-      external: true,
-    },
-    {
-      icon: FileText,
-      label: 'Mon CV',
-      value: 'Télécharger mon CV (PDF)',
-      href: '/CV_ElHadjiBiraneCisseThiam.pdf',
-      color: 'text-pink-400',
-      bg: 'bg-pink-500/10 border-pink-500/20',
-      download: 'CV_ElHadjiBiraneCisseThiam.pdf',
-    },
-  ];
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (form._gotcha) return; // champ piège anti-spam rempli par un robot
 
-  const inputClass = 'w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-gray-600 text-sm focus:outline-none focus:border-violet-500/50 focus:bg-white/8 transition-all duration-200';
+    if (!FORMSPREE_ID) {
+      const body = `${form.message}\n\n— ${form.name} (${form.email})`;
+      window.location.href = `mailto:${profile.email}?subject=${encodeURIComponent(form.subject)}&body=${encodeURIComponent(body)}`;
+      setStatus('mailto');
+      return;
+    }
+
+    setStatus('sending');
+    try {
+      const res = await fetch(`https://formspree.io/f/${FORMSPREE_ID}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          _subject: form.subject,
+          message: form.message,
+        }),
+      });
+      if (!res.ok) throw new Error(String(res.status));
+      setStatus('sent');
+      setForm(empty);
+    } catch {
+      setStatus('error');
+    }
+  };
+
+  const set = (k: keyof typeof form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [k]: e.target.value });
+    if (status !== 'sending') setStatus('idle');
+  };
 
   return (
-    <section id="contact" className="py-24 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-950/5 to-transparent pointer-events-none" />
-      <div ref={ref} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="contact" className="relative py-28 sm:py-36">
+      <div className="container-x">
+        <SectionHeading
+          index="07"
+          label={t('contact.label')}
+          title={
+            <>
+              {t('contact.title1')} <span className="em">{t('contact.title2')}</span>.
+            </>
+          }
+          intro={t('contact.intro')}
+        />
 
-        <div className={`text-center mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <div className="section-tag mx-auto w-fit mb-4">Contact</div>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white">
-            Travaillons <span className="gradient-text">ensemble</span>
-          </h2>
-          <p className="text-gray-400 mt-4 max-w-xl mx-auto">
-            Opportunité de stage, projet collaboratif ou simple échange ? Je suis disponible.
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Left: socials */}
-          <div
-            className={`transition-all duration-700 delay-100 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'}`}
-          >
-            <div className="flex items-center gap-3 mb-6">
-              <MessageCircle size={22} className="text-violet-400" />
-              <h3 className="text-xl font-bold text-white">Restons connectés</h3>
-            </div>
-            <p className="text-gray-400 mb-8 leading-relaxed">
-              Je suis ouvert aux opportunités de stage, collaborations sur des projets innovants
-              et échanges avec des professionnels du secteur.
-            </p>
-
-            <div className="space-y-3">
-              {socials.map(({ icon: Icon, label, value, href, color, bg, external, download }) => (
-                <a
-                  key={label}
-                  href={href}
-                  {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                  {...(download ? { download } : {})}
-                  className={`flex items-center gap-4 p-4 rounded-xl border ${bg} glass-card hover:scale-[1.02] transition-all`}
-                >
-                  <div className={`p-2.5 rounded-lg border ${bg} flex-shrink-0`}>
-                    <Icon size={20} className={color} />
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-white">{label}</p>
-                    <p className="text-xs text-gray-500 truncate max-w-[200px] sm:max-w-none">{value}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          {/* Right: form */}
-          <div
-            className={`transition-all duration-700 delay-200 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8'}`}
-          >
-            <div className="glass-card rounded-2xl border border-white/8 p-6 sm:p-8 relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
-
-              {sent ? (
-                <div className="flex flex-col items-center justify-center py-16 text-center">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mb-4">
-                    <Send size={24} className="text-emerald-400" />
-                  </div>
-                  <h4 className="text-lg font-bold text-white mb-2">Message envoyé !</h4>
-                  <p className="text-gray-400 text-sm">Je vous répondrai dans les plus brefs délais.</p>
+        <div className="grid gap-16 lg:grid-cols-[1fr_1.2fr]">
+          <div>
+            <Reveal>
+              <button
+                onClick={copy}
+                className="group flex w-full items-center justify-between gap-4 rounded-3xl border border-line/15 p-6 text-left transition-colors hover:border-ink"
+              >
+                <div className="min-w-0">
+                  <div className="label mb-2">Email</div>
+                  <div className="truncate text-xl font-medium sm:text-2xl">{profile.email}</div>
                 </div>
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-4">
-                  <h3 className="text-xl font-bold text-white mb-6">Envoyez-moi un message</h3>
+                <span
+                  className={`grid h-12 w-12 shrink-0 place-items-center rounded-full transition-all duration-300 ${
+                    copied ? 'scale-110 bg-accent text-[#111]' : 'bg-line/10 group-hover:bg-ink group-hover:text-bg'
+                  }`}
+                  aria-live="polite"
+                >
+                  {copied ? <Check size={18} aria-label={t('contact.copied')} /> : <Copy size={18} aria-label={t('contact.copy')} />}
+                </span>
+              </button>
+            </Reveal>
 
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-xs font-medium text-gray-400 mb-1.5">Nom complet</label>
-                      <input type="text" required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
-                        placeholder="Votre nom" className={inputClass} />
-                    </div>
-                    <div>
-                      <label className="block text-xs font-medium text-gray-400 mb-1.5">Email</label>
-                      <input type="email" required value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
-                        placeholder="votre@email.com" className={inputClass} />
-                    </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1.5">Sujet</label>
-                    <input type="text" required value={form.subject} onChange={e => setForm({ ...form, subject: e.target.value })}
-                      placeholder="Objet de votre message" className={inputClass} />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-medium text-gray-400 mb-1.5">Message</label>
-                    <textarea required rows={5} value={form.message} onChange={e => setForm({ ...form, message: e.target.value })}
-                      placeholder="Votre message..." className={`${inputClass} resize-none`} />
-                  </div>
-
-                  <button
-                    type="submit"
-                    className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 text-white font-semibold shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 hover:scale-[1.02] transition-all duration-200"
+            <Reveal delay={100}>
+              <div className="mt-4 grid grid-cols-2 gap-4">
+                {[
+                  { href: profile.github, label: 'GitHub', icon: <GithubIcon size={20} /> },
+                  { href: profile.linkedin, label: 'LinkedIn', icon: <Linkedin size={20} /> },
+                ].map((l) => (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="group flex items-center justify-between rounded-3xl border border-line/15 p-6 transition-colors hover:border-ink hover:bg-ink hover:text-bg"
                   >
-                    <Send size={16} />
-                    Envoyer le message
-                  </button>
-                </form>
-              )}
-            </div>
+                    <span className="flex items-center gap-3 font-medium">
+                      {l.icon} {l.label}
+                    </span>
+                    <ArrowUpRight size={18} className="transition-transform duration-300 group-hover:rotate-45" />
+                  </a>
+                ))}
+              </div>
+            </Reveal>
+
+            <Reveal delay={200}>
+              <div className="mt-10 space-y-3 font-mono text-sm text-muted">
+                <p className="flex items-center gap-3">
+                  <span className="h-2 w-2 rounded-full bg-accent" /> {t('contact.available')}
+                </p>
+                <p>Dakar, Sénégal — {time} GMT</p>
+              </div>
+            </Reveal>
           </div>
+
+          <Reveal delay={150}>
+            {status === 'sent' ? (
+              <div className="flex h-full flex-col items-start justify-center rounded-3xl border border-line/15 p-10 animate-fade-up" role="status">
+                <span className="grid h-14 w-14 place-items-center rounded-full bg-accent text-[#111]">
+                  <Check size={24} />
+                </span>
+                <p className="mt-6 text-2xl font-semibold">{t('contact.sent')}</p>
+              </div>
+            ) : (
+              <form onSubmit={submit} className="space-y-8">
+                <div className="grid gap-8 sm:grid-cols-2">
+                  <label className="relative block">
+                    <input required value={form.name} onChange={set('name')} placeholder=" " className={field} autoComplete="name" />
+                    <span className={floating}>{t('contact.name')}</span>
+                  </label>
+                  <label className="relative block">
+                    <input
+                      required
+                      type="email"
+                      value={form.email}
+                      onChange={set('email')}
+                      placeholder=" "
+                      className={field}
+                      autoComplete="email"
+                    />
+                    <span className={floating}>{t('contact.email')}</span>
+                  </label>
+                </div>
+                <label className="relative block">
+                  <input required value={form.subject} onChange={set('subject')} placeholder=" " className={field} />
+                  <span className={floating}>{t('contact.subject')}</span>
+                </label>
+                <label className="relative block">
+                  <textarea
+                    required
+                    rows={4}
+                    value={form.message}
+                    onChange={set('message')}
+                    placeholder=" "
+                    className={`${field} resize-none`}
+                  />
+                  <span className={floating}>{t('contact.message')}</span>
+                </label>
+                {/* Champ invisible anti-spam */}
+                <input
+                  type="text"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={form._gotcha}
+                  onChange={set('_gotcha')}
+                  className="hidden"
+                  aria-hidden="true"
+                />
+
+                <div className="flex flex-wrap items-center gap-4">
+                  <Magnetic>
+                    <button type="submit" disabled={status === 'sending'} className="btn-primary group disabled:opacity-70">
+                      {status === 'sending' ? t('contact.sending') : t('contact.send')}
+                      {status === 'sending' ? (
+                        <Loader2 size={16} className="animate-spin" />
+                      ) : (
+                        <Send size={16} className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                      )}
+                    </button>
+                  </Magnetic>
+                  {status === 'mailto' && (
+                    <span className="animate-fade-up text-sm text-muted" role="status">
+                      {t('contact.mailto')}
+                    </span>
+                  )}
+                  {status === 'error' && (
+                    <span className="flex animate-fade-up items-center gap-2 text-sm text-hot" role="alert">
+                      <AlertTriangle size={15} /> {t('contact.error')}
+                    </span>
+                  )}
+                </div>
+              </form>
+            )}
+          </Reveal>
         </div>
       </div>
     </section>

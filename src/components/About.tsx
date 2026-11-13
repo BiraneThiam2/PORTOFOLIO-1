@@ -1,85 +1,103 @@
-import { User, Zap, Target } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
+import { profile } from '../data';
+import { useLang } from '../lib/i18n';
+import { Reveal, SectionHeading } from './ui';
 
-export default function About() {
-  const [visible, setVisible] = useState(false);
+function Photo({ badge }: { badge: string }) {
   const ref = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: 0.1 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
+  const onMove = (e: React.PointerEvent) => {
+    if (e.pointerType !== 'mouse' || !ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    ref.current.style.transform = `perspective(900px) rotateY(${px * 10}deg) rotateX(${-py * 10}deg)`;
+  };
+  const onLeave = () => {
+    if (ref.current) ref.current.style.transform = '';
+  };
 
-  const cards = [
-    { icon: User,   color: 'text-violet-400', bg: 'bg-violet-500/10 border-violet-500/20', title: 'Qui je suis',    text: 'Étudiant passionné par l\'intersection entre technologie et stratégie des affaires.' },
-    { icon: Zap,    color: 'text-cyan-400',   bg: 'bg-cyan-500/10 border-cyan-500/20',     title: 'Mes intérêts',  text: 'Intelligence Artificielle, Data Science, Cybersécurité et systèmes informatiques.' },
-    { icon: Target, color: 'text-pink-400',   bg: 'bg-pink-500/10 border-pink-500/20',     title: 'Ma motivation', text: 'Apprendre continuellement et évoluer vers un professionnel de la tech orienté IA.' },
+  return (
+    <div className="relative mx-auto w-full max-w-sm" onPointerMove={onMove} onPointerLeave={onLeave}>
+      <div ref={ref} className="relative transition-transform duration-300 ease-out [transform-style:preserve-3d]">
+        <div className="absolute -inset-3 -z-10 rotate-3 rounded-[2rem] bg-accent" />
+        <div className="aspect-[4/5] overflow-hidden rounded-[1.75rem] border border-line/10">
+          <img
+            src={profile.photo}
+            alt={`${profile.firstName} ${profile.lastName}`}
+            className="h-full w-full object-cover grayscale-[30%] transition-all duration-700 hover:scale-105 hover:grayscale-0"
+            loading="lazy"
+          />
+        </div>
+      </div>
+
+      {/* Badge circulaire rotatif */}
+      <div className="absolute -bottom-8 -left-8 grid h-32 w-32 place-items-center rounded-full bg-ink text-bg shadow-2xl">
+        <svg viewBox="0 0 100 100" className="absolute inset-0 h-full w-full animate-spin-slow" aria-hidden="true">
+          <defs>
+            <path id="circle" d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0" />
+          </defs>
+          <text className="fill-current font-mono text-[9.5px] uppercase tracking-[0.2em]">
+            <textPath href="#circle">{badge}</textPath>
+          </text>
+        </svg>
+        <span className="font-serif text-3xl italic text-accent">✦</span>
+      </div>
+    </div>
+  );
+}
+
+export default function About() {
+  const { t } = useLang();
+  const facts = [
+    { k: t('about.k1'), v: t('about.v1') },
+    { k: t('about.k2'), v: t('about.v2') },
+    { k: t('about.k3'), v: t('about.v3') },
   ];
 
   return (
-    <section id="about" className="py-24 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-violet-950/5 to-transparent pointer-events-none" />
-      <div ref={ref} className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="about" className="relative py-28 sm:py-36">
+      <div className="container-x">
+        <SectionHeading
+          index="01"
+          label={t('about.label')}
+          title={
+            <>
+              {t('about.title1')} <span className="em">{t('about.title2')}</span> {t('about.title3')}{' '}
+              <span className="em">{t('about.title4')}</span>.
+            </>
+          }
+        />
 
-        {/* Header */}
-        <div className={`text-center mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <div className="section-tag mx-auto w-fit mb-4">À propos</div>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white">
-            Qui suis-<span className="gradient-text">je ?</span>
-          </h2>
-        </div>
+        <div className="grid items-start gap-16 lg:grid-cols-[1fr_1.15fr] lg:gap-20">
+          <Reveal y={40}>
+            <Photo badge={t('about.badge')} />
+          </Reveal>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center mb-12">
-          {/* Photo */}
-          <div className={`transition-all duration-700 delay-100 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-            <div className="relative mx-auto max-w-sm">
-              {/* Glow ring */}
-              <div className="absolute -inset-1 bg-gradient-to-br from-violet-600 to-cyan-500 rounded-2xl blur-sm opacity-50" />
-              <div className="relative aspect-square rounded-2xl overflow-hidden border border-white/10">
-                <img src="b.jpeg" alt="El Hadji Birane Cisse Thiam" className="w-full h-full object-cover" />
-              </div>
-              {/* Floating badge */}
-              <div className="absolute -bottom-4 -right-4 glass px-4 py-2 rounded-xl text-sm font-semibold text-white shadow-xl">
-                IA &amp; Business 🎓
-              </div>
-            </div>
-          </div>
+          <div>
+            <Reveal>
+              <p className="text-2xl leading-snug sm:text-3xl">
+                {t('about.lead1')} <span className="text-signal">{profile.school}</span>
+                {t('about.lead2')}
+              </p>
+            </Reveal>
+            <Reveal delay={100}>
+              <p className="mt-6 text-lg leading-relaxed text-muted">{t('about.body')}</p>
+            </Reveal>
 
-          {/* Cards */}
-          <div className={`transition-all duration-700 delay-200 ${visible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-            <div className="space-y-4">
-              {cards.map(({ icon: Icon, color, bg, title, text }) => (
-                <div key={title} className={`glass-card rounded-xl p-5 border ${bg}`}>
-                  <div className="flex items-start gap-4">
-                    <div className={`p-2.5 rounded-lg ${bg} border flex-shrink-0`}>
-                      <Icon size={20} className={color} />
-                    </div>
-                    <div>
-                      <h3 className="font-semibold text-white mb-1">{title}</h3>
-                      <p className="text-gray-400 text-sm leading-relaxed">{text}</p>
-                    </div>
+            <dl className="mt-12 divide-y divide-line/10 border-y border-line/10">
+              {facts.map((f, i) => (
+                <Reveal key={i} delay={150 + i * 80}>
+                  <div className="group grid gap-2 py-6 sm:grid-cols-[180px_1fr] sm:gap-8">
+                    <dt className="label flex items-center gap-2 pt-1">
+                      <span className="h-1.5 w-1.5 rounded-full bg-line/30 transition-colors duration-300 group-hover:bg-accent" />
+                      {f.k}
+                    </dt>
+                    <dd className="text-lg transition-transform duration-300 group-hover:translate-x-1">{f.v}</dd>
                   </div>
-                </div>
+                </Reveal>
               ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Bio block */}
-        <div className={`transition-all duration-700 delay-300 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <div className="glass-card rounded-2xl p-8 border border-violet-500/10 relative overflow-hidden">
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-violet-500/50 to-transparent" />
-            <p className="text-gray-300 leading-relaxed mb-4 text-lg">
-              Je suis étudiant en première année à <span className="text-violet-400 font-semibold">Swiss UMEF Campus Dakar</span>, spécialisé en{' '}
-              <span className="text-white font-semibold">Intelligence Artificielle et Stratégie des Affaires</span>.
-            </p>
-            <p className="text-gray-400 leading-relaxed mb-4">
-              Je m'intéresse particulièrement à l'intelligence artificielle, l'analyse de données, la cybersécurité et les systèmes informatiques.
-            </p>
-            <p className="text-gray-400 leading-relaxed">
-              Mon ambition est de combiner expertise technique et vision stratégique pour résoudre des problèmes complexes et innovants.
-            </p>
+            </dl>
           </div>
         </div>
       </div>

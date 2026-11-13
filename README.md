@@ -1,6 +1,6 @@
 # Portfolio — El Hadji Birane Cisse Thiam
 
-Portfolio personnel développé avec React, TypeScript et Tailwind CSS. Design dark moderne avec glassmorphism, animations et effets néon.
+Portfolio personnel bilingue (FR / EN) développé avec React, TypeScript et Tailwind CSS.
 
 ![React](https://img.shields.io/badge/React-18-61DAFB?style=flat&logo=react&logoColor=white)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5.5-3178C6?style=flat&logo=typescript&logoColor=white)
@@ -9,114 +9,84 @@ Portfolio personnel développé avec React, TypeScript et Tailwind CSS. Design d
 
 ---
 
-## Aperçu
-
-Site vitrine présentant mon profil, mes compétences et mes projets personnels. L'interface mise sur un impact visuel immédiat : fond sombre animé, dégradés violet/cyan, cartes en verre et transitions fluides.
-
----
-
-## Stack technique
-
-| Outil | Rôle |
-|---|---|
-| React 18 + TypeScript | UI et logique des composants |
-| Tailwind CSS | Design utilitaire |
-| Vite | Bundler et dev server |
-| Supabase | Backend du formulaire de contact |
-| Lucide React | Icônes |
-| Space Grotesk | Typographie (Google Fonts) |
-
----
-
 ## Fonctionnalités
 
-- Hero plein écran avec nom en dégradé animé
-- Navigation fixe glass avec détection de la section active
-- Orbs gradient animées en arrière-plan
-- Cartes glassmorphism avec glow néon au survol
-- Barres de compétences avec animation d'entrée et effet shimmer
-- 9 cartes projets cliquables (liens GitHub)
-- Dashboard Power BI intégré (PDF)
-- Timeline de formation
-- Formulaire de contact connecté à Supabase
-- Animations scroll-triggered via IntersectionObserver
-- 100% responsive mobile
-
----
-
-## Projets présentés
-
-| Projet | Technologie | Lien |
-|---|---|---|
-| Planification de Révision | Python | [github.com/BiraneThiam2/Planning-de-revision](https://github.com/BiraneThiam2/Planning-de-revision) |
-| E-commerce Parfums | HTML/CSS/JS | [github.com/BiraneThiam2/luxury](https://github.com/BiraneThiam2/luxury) |
-| Chatbot IA | Python / NLP | [github.com/BiraneThiam2/Chatboot-IA](https://github.com/BiraneThiam2/Chatboot-IA) |
-| Chat Client-Serveur | Python / Sockets | [github.com/BiraneThiam2/Chat-Python](https://github.com/BiraneThiam2/Chat-Python) |
-| Tic-Tac-Toe | JavaScript | [github.com/BiraneThiam2/projet-tic-tac-toe](https://github.com/BiraneThiam2/projet-tic-tac-toe) |
-| Organisateur de Fichiers | Python | [github.com/BiraneThiam2/Organisateur-de-fichier](https://github.com/BiraneThiam2/Organisateur-de-fichier) |
-| Dashboard Performances | Power BI | PDF local |
-| Assistant Matinal | Python | [github.com/BiraneThiam2/assistant-matinal](https://github.com/BiraneThiam2/assistant-matinal) |
-| Portfolio Personnel | React / TypeScript | [github.com/BiraneThiam2/Portofolio](https://github.com/BiraneThiam2/Portofolio) |
+- **Réseau de neurones interactif** en arrière-plan du hero (canvas), qui réagit au pointeur
+- **Bilingue FR / EN** : bouton dans le header, langue du navigateur détectée par défaut
+- **Thème clair / sombre** avec transition circulaire (touche `T`)
+- **Palette de commandes** `⌘K` / `Ctrl+K` : navigation, études de cas, thème, langue, CV, email
+- **Projets filtrables** avec cartes 3D et halo qui suit la souris
+- **Études de cas** détaillées (objectif, démarche, résultats, limites), accessibles par lien direct `#projet/<slug>`
+- **Activité GitHub en direct** : dépôts récents, étoiles et répartition des langages via l'API GitHub
+- **Formulaire de contact** envoyé via Formspree (ou ouverture de la messagerie si non configuré)
+- Animations au défilement, compteurs, machine à écrire, heure de Dakar en direct
+- Respect de la préférence « réduire les animations », navigation clavier, 100 % responsive
 
 ---
 
 ## Installation
 
 ```bash
-# Cloner le dépôt
-git clone https://github.com/BiraneThiam2/Portofolio.git
-cd Portofolio
-
-# Installer les dépendances
+git clone https://github.com/BiraneThiam2/PORTOFOLIO-1.git
+cd PORTOFOLIO-1
 npm install
-
-# Lancer en développement
 npm run dev
 ```
 
 Le site est accessible sur `http://localhost:5173`.
 
-## Build de production
-
 ```bash
-npm run build
-npm run preview
+npm run build     # build de production dans dist/
+npm run preview   # prévisualiser le build
 ```
 
-Les fichiers générés se trouvent dans `dist/`.
+### Activer l'envoi du formulaire de contact
+
+1. Créer un compte gratuit sur [formspree.io](https://formspree.io) et un nouveau formulaire.
+2. Copier son identifiant (la fin de l'URL `https://formspree.io/f/xxxxxxx`).
+3. Créer un fichier `.env` à la racine (voir `.env.example`) :
+   ```env
+   VITE_FORMSPREE_ID=xxxxxxx
+   ```
+4. Sur l'hébergeur (Vercel, Netlify…), ajouter la même variable d'environnement.
+
+Sans cette variable, le bouton « Envoyer » ouvre la messagerie du visiteur avec le message pré-rempli.
 
 ---
 
-## Structure du projet
+## Structure
 
 ```
 src/
+├── data.ts               # ★ Tout le contenu : profil, projets, études de cas, compétences, parcours
+├── i18n/ui.ts            # Textes d'interface en français et en anglais
+├── lib/
+│   ├── i18n.tsx          # Gestion de la langue (useLang)
+│   ├── theme.ts          # Thème clair / sombre
+│   ├── hooks.ts          # Apparition au scroll, compteurs, machine à écrire…
+│   └── nav.ts            # Défilement et liens vers les études de cas
 ├── components/
-│   ├── Header.tsx      # Navigation fixe avec détection section active
-│   ├── Hero.tsx        # Section d'accueil plein écran
-│   ├── About.tsx       # Présentation avec photo
-│   ├── Skills.tsx      # Compétences avec barres animées
-│   ├── Projects.tsx    # 9 cartes projets avec liens GitHub
-│   ├── Education.tsx   # Parcours académique (timeline)
-│   ├── Goals.tsx       # Objectifs professionnels
-│   ├── Contact.tsx     # Formulaire de contact (Supabase)
-│   └── Footer.tsx      # Pied de page
-├── App.tsx             # Racine + orbs d'arrière-plan
-├── index.css           # Styles globaux, utilitaires, animations
-└── main.tsx            # Point d'entrée React
+│   ├── Header.tsx        # Navigation, langue, thème, menu mobile
+│   ├── Hero.tsx          # Accueil + réseau de neurones (NeuralCanvas.tsx)
+│   ├── About.tsx · Skills.tsx · Education.tsx · Vision.tsx
+│   ├── Projects.tsx      # Filtres et cartes projets
+│   ├── CaseStudy.tsx     # Panneau d'étude de cas
+│   ├── GithubActivity.tsx# Dépôts GitHub en direct
+│   ├── Contact.tsx       # Formulaire (Formspree)
+│   ├── CommandPalette.tsx · Cursor.tsx · Marquee.tsx · Footer.tsx
+│   └── ui.tsx            # Composants partagés
+└── index.css             # Couleurs du thème (variables CSS) et animations
 ```
 
 ---
 
 ## Personnalisation
 
-**Mettre à jour les projets** — modifier le tableau `projects` dans [src/components/Projects.tsx](src/components/Projects.tsx).
-
-**Informations de contact** — Email et liens sociaux dans `Hero.tsx`, `Contact.tsx`, `Header.tsx` et `Footer.tsx`.
-
-**CV** — placer le fichier PDF dans `public/cv.pdf`. Le bouton "Mon CV" déclenchera le téléchargement automatiquement.
-
-**Photo de profil** — remplacer `b.jpeg` à la racine et mettre à jour la référence dans `About.tsx`.
+- **Contenu** : tout se modifie dans [src/data.ts](src/data.ts). Chaque texte existe en `fr` et en `en`.
+- **Ajouter une capture d'écran à un projet** : placer l'image dans `public/projects/` puis ajouter
+  `image: '/projects/mon-image.png'` au projet. Sans image, un aperçu coloré est généré.
+- **Ajouter une étude de cas** : renseigner le champ `caseStudy` du projet (voir DiabèteScope comme modèle).
+- **Couleurs** : variables `--accent`, `--bg`, `--ink`… en haut de [src/index.css](src/index.css).
 
 ---
 

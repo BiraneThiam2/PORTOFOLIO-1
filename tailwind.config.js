@@ -1,51 +1,52 @@
 /** @type {import('tailwindcss').Config} */
+const token = (name) => `rgb(var(--${name}) / <alpha-value>)`;
+
 export default {
   content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
   darkMode: 'class',
   theme: {
     extend: {
-      fontFamily: {
-        sans: ['Space Grotesk', 'system-ui', 'sans-serif'],
+      colors: {
+        bg: token('bg'),
+        surface: token('surface'),
+        ink: token('ink'),
+        muted: token('muted'),
+        line: token('line'),
+        accent: token('accent'), // couleur de remplissage (boutons, pastilles)
+        signal: token('signal'), // accent lisible en texte sur le fond
+        hot: token('hot'),
       },
-      animation: {
-        'float': 'float 6s ease-in-out infinite',
-        'float-slow': 'float 12s ease-in-out 3s infinite',
-        'gradient-x': 'gradientX 4s ease infinite',
-        'orb': 'orbMove 20s ease-in-out infinite',
-        'orb-reverse': 'orbReverse 25s ease-in-out infinite',
-        'fade-up': 'fadeUp 0.7s ease-out forwards',
-        'shimmer': 'shimmer 2.5s linear infinite',
-        'pulse-slow': 'pulse 3s ease-in-out infinite',
+      fontFamily: {
+        sans: ['"Bricolage Grotesque"', 'system-ui', 'sans-serif'],
+        serif: ['"Instrument Serif"', 'Georgia', 'serif'],
+        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace'],
       },
       keyframes: {
-        float: {
-          '0%, 100%': { transform: 'translateY(0)' },
-          '50%': { transform: 'translateY(-20px)' },
-        },
-        gradientX: {
-          '0%, 100%': { 'background-position': '0% 50%' },
-          '50%': { 'background-position': '100% 50%' },
-        },
-        orbMove: {
-          '0%, 100%': { transform: 'translate(0, 0)' },
-          '25%': { transform: 'translate(60px, -40px)' },
-          '50%': { transform: 'translate(-40px, 60px)' },
-          '75%': { transform: 'translate(40px, 40px)' },
-        },
-        orbReverse: {
-          '0%, 100%': { transform: 'translate(0, 0)' },
-          '25%': { transform: 'translate(-60px, 40px)' },
-          '50%': { transform: 'translate(40px, -60px)' },
-          '75%': { transform: 'translate(-40px, -40px)' },
+        marquee: { from: { transform: 'translateX(0)' }, to: { transform: 'translateX(-50%)' } },
+        spin: { to: { transform: 'rotate(360deg)' } },
+        blink: { '50%': { opacity: '0' } },
+        rise: {
+          from: { opacity: '0', transform: 'translateY(110%) rotate(4deg)' },
+          to: { opacity: '1', transform: 'translateY(0) rotate(0)' },
         },
         fadeUp: {
-          from: { opacity: '0', transform: 'translateY(30px)' },
+          from: { opacity: '0', transform: 'translateY(24px)' },
           to: { opacity: '1', transform: 'translateY(0)' },
         },
-        shimmer: {
-          '0%': { transform: 'translateX(-100%)' },
-          '100%': { transform: 'translateX(100%)' },
+        scrollDot: {
+          '0%': { transform: 'translateY(0)', opacity: '1' },
+          '80%': { transform: 'translateY(14px)', opacity: '0' },
+          '100%': { transform: 'translateY(0)', opacity: '0' },
         },
+      },
+      animation: {
+        marquee: 'marquee 40s linear infinite',
+        'marquee-slow': 'marquee 60s linear infinite',
+        'spin-slow': 'spin 18s linear infinite',
+        blink: 'blink 1s steps(1) infinite',
+        rise: 'rise 0.9s cubic-bezier(.2,.8,.2,1) both',
+        'fade-up': 'fadeUp 0.7s cubic-bezier(.2,.8,.2,1) both',
+        'scroll-dot': 'scrollDot 1.8s ease-in-out infinite',
       },
     },
   },

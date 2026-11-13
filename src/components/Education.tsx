@@ -1,192 +1,110 @@
-import { GraduationCap, MapPin, Calendar, BookOpen, Award, ExternalLink } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
-
-const certifications = [
-  {
-    title: 'Meta Front-End Developer',
-    issuer: 'Meta · Coursera',
-    period: '2024 — 7 mois',
-    gradient: 'from-blue-500 to-indigo-500',
-    border: 'border-blue-500/20',
-    pdfPath: '/meta-frontend-developer.pdf',
-    skills: ['HTML/CSS', 'JavaScript', 'React', 'Git/GitHub', 'UI/UX Design', 'Jest'],
-    description: 'Certification professionnelle obtenue après 7 mois de formation intensive (6h/semaine). Projet final : développement d\'une application complète de A à Z.',
-  },
-];
-
-const educations = [
-  {
-    degree: 'Intelligence Artificielle & Stratégie des Affaires',
-    school: 'Swiss UMEF Campus Dakar',
-    period: '2025 — En cours',
-    status: 'En cours',
-    statusColor: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30',
-    gradient: 'from-violet-500 to-cyan-500',
-    border: 'border-violet-500/20',
-    description: 'Formation spécialisée combinant les compétences techniques en IA avec une compréhension stratégique du monde des affaires.',
-    subjects: ['Machine Learning', 'Data Science', 'Stratégie d\'entreprise', 'Transformation digitale', 'Cybersécurité'],
-  },
-  {
-    degree: 'Génie Logiciel & Bases de données',
-    school: 'Formation initiale',
-    period: '2024 — 2025',
-    status: 'Complétée',
-    statusColor: 'text-gray-400 bg-white/5 border-white/10',
-    gradient: 'from-gray-500 to-gray-700',
-    border: 'border-white/10',
-    description: 'Première année d\'études en génie logiciel qui m\'a permis d\'acquérir des bases solides en développement et gestion de données.',
-    subjects: ['Programmation', 'Bases de données', 'SQL', 'Modélisation', 'Architecture logicielle'],
-  },
-];
+import { Award, ArrowUpRight } from 'lucide-react';
+import { certifications, educations } from '../data';
+import { useElementProgress } from '../lib/hooks';
+import { Reveal, SectionHeading } from './ui';
+import { useLang } from '../lib/i18n';
 
 export default function Education() {
-  const [visible, setVisible] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect(); } }, { threshold: 0.1 });
-    if (ref.current) obs.observe(ref.current);
-    return () => obs.disconnect();
-  }, []);
+  const [lineRef, progress] = useElementProgress<HTMLOListElement>();
+  const { t, tr } = useLang();
 
   return (
-    <section id="education" className="py-24 relative">
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-blue-950/5 to-transparent pointer-events-none" />
-      <div ref={ref} className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section id="education" className="relative py-28 sm:py-36">
+      <div className="container-x">
+        <SectionHeading
+          index="05"
+          label={t('edu.label')}
+          title={
+            <>
+              {t('edu.title1')} <span className="em">{t('edu.title2')}</span> {t('edu.title3')}
+            </>
+          }
+        />
 
-        <div className={`text-center mb-16 transition-all duration-700 ${visible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-6'}`}>
-          <div className="section-tag mx-auto w-fit mb-4">Formation</div>
-          <h2 className="text-4xl sm:text-5xl font-bold text-white">
-            Parcours <span className="gradient-text">académique</span>
-          </h2>
-        </div>
-
-        {/* Timeline */}
-        <div className="relative">
-          {/* Vertical line */}
-          <div className="absolute left-6 top-0 bottom-0 w-px bg-gradient-to-b from-violet-500/50 via-cyan-500/30 to-transparent hidden sm:block" />
-
-          <div className="space-y-8">
-            {educations.map((edu, i) => (
-              <div
-                key={edu.degree}
-                className={`relative transition-all duration-700`}
-                style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateX(0)' : 'translateX(-30px)', transitionDelay: `${200 + i * 150}ms` }}
-              >
-                {/* Timeline dot */}
-                <div className={`absolute left-4 top-6 w-4 h-4 rounded-full bg-gradient-to-br ${edu.gradient} border-2 border-[#030712] hidden sm:block z-10`} />
-
-                <div className={`sm:ml-16 glass-card rounded-2xl border ${edu.border} overflow-hidden`}>
-                  {/* Top accent */}
-                  <div className={`h-1 bg-gradient-to-r ${edu.gradient}`} />
-
-                  <div className="p-6 sm:p-8">
-                    <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-                      <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-xl bg-gradient-to-br ${edu.gradient} bg-opacity-20 flex-shrink-0`}>
-                          <GraduationCap size={24} className="text-white" />
-                        </div>
-                        <div>
-                          <h3 className="text-lg sm:text-xl font-bold text-white mb-1">{edu.degree}</h3>
-                          <div className="flex flex-wrap gap-3 text-sm text-gray-400">
-                            <span className="flex items-center gap-1">
-                              <MapPin size={14} className="text-gray-500" />
-                              {edu.school}
-                            </span>
-                            <span className="flex items-center gap-1">
-                              <Calendar size={14} className="text-gray-500" />
-                              {edu.period}
-                            </span>
-                          </div>
-                        </div>
-                      </div>
-                      <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${edu.statusColor}`}>
-                        {edu.status}
-                      </span>
+        <div className="grid gap-16 lg:grid-cols-[1.4fr_1fr]">
+          {/* Timeline : la ligne se remplit au défilement */}
+          <ol ref={lineRef} className="relative pl-10">
+            <span className="absolute bottom-2 left-[7px] top-2 w-px bg-line/15" aria-hidden="true" />
+            <span
+              className="absolute left-[7px] top-2 w-px bg-signal transition-[height] duration-150"
+              style={{ height: `calc(${progress * 100}% - 1rem)` }}
+              aria-hidden="true"
+            />
+            {educations.map((e, i) => {
+              const lit = progress > i / educations.length;
+              return (
+                <li key={e.degree.fr} className="relative pb-14 last:pb-0">
+                  <span
+                    className={`absolute -left-10 top-1.5 grid h-[15px] w-[15px] place-items-center rounded-full border-2 transition-colors duration-500 ${
+                      lit ? 'border-signal bg-signal' : 'border-line/30 bg-bg'
+                    }`}
+                  >
+                    {e.current && <span className="absolute h-full w-full animate-ping rounded-full bg-accent/60" />}
+                  </span>
+                  <Reveal delay={i * 120}>
+                    <div className="mb-3 flex flex-wrap items-center gap-3">
+                      <span className="label">{tr(e.period)}</span>
+                      {e.current && (
+                        <span className="rounded-full bg-accent px-2.5 py-0.5 font-mono text-[10px] font-medium uppercase tracking-wider text-[#111]">
+                          {t('edu.current')}
+                        </span>
+                      )}
                     </div>
-
-                    <p className="text-gray-400 leading-relaxed mb-5">{edu.description}</p>
-
-                    <div className="flex items-start gap-3">
-                      <BookOpen size={16} className="text-gray-500 mt-0.5 flex-shrink-0" />
-                      <div className="flex flex-wrap gap-2">
-                        {edu.subjects.map((s) => (
-                          <span key={s} className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 border border-white/8 text-gray-300">
-                            {s}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Certifications */}
-        <div className={`mt-16 transition-all duration-700`} style={{ opacity: visible ? 1 : 0, transform: visible ? 'translateY(0)' : 'translateY(24px)', transitionDelay: '600ms' }}>
-          <div className="flex items-center gap-3 mb-6">
-            <Award size={20} className="text-blue-400" />
-            <h3 className="text-xl font-bold text-white">Certifications</h3>
-          </div>
-
-          <div className="space-y-4">
-            {certifications.map((cert) => (
-              <a
-                key={cert.title}
-                href={cert.pdfPath}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={`block glass-card rounded-2xl border ${cert.border} overflow-hidden hover:border-blue-500/50 transition-all duration-300 group`}
-              >
-                <div className={`h-1 bg-gradient-to-r ${cert.gradient}`} />
-                <div className="p-6 sm:p-8">
-                  <div className="flex flex-wrap items-start justify-between gap-4 mb-4">
-                    <div className="flex items-start gap-4">
-                      <div className={`p-3 rounded-xl bg-gradient-to-br ${cert.gradient} bg-opacity-20 flex-shrink-0`}>
-                        <Award size={24} className="text-white" />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2">
-                          <h4 className="text-lg sm:text-xl font-bold text-white mb-1 group-hover:text-blue-300 transition-colors">{cert.title}</h4>
-                          <ExternalLink size={14} className="text-gray-500 group-hover:text-blue-400 transition-colors mb-1" />
-                        </div>
-                        <div className="flex flex-wrap gap-3 text-sm text-gray-400">
-                          <span className="flex items-center gap-1">
-                            <MapPin size={14} className="text-gray-500" />
-                            {cert.issuer}
-                          </span>
-                          <span className="flex items-center gap-1">
-                            <Calendar size={14} className="text-gray-500" />
-                            {cert.period}
-                          </span>
-                        </div>
-                      </div>
-                    </div>
-                    <span className="px-3 py-1 rounded-full text-xs font-semibold border text-blue-400 bg-blue-500/10 border-blue-500/30">
-                      Certifiée
-                    </span>
-                  </div>
-
-                  <p className="text-gray-400 leading-relaxed mb-5">{cert.description}</p>
-
-                  <div className="flex items-start gap-3">
-                    <BookOpen size={16} className="text-gray-500 mt-0.5 flex-shrink-0" />
-                    <div className="flex flex-wrap gap-2">
-                      {cert.skills.map((s) => (
-                        <span key={s} className="px-2.5 py-1 rounded-lg text-xs font-medium bg-white/5 border border-white/8 text-gray-300">
-                          {s}
+                    <h3 className="text-2xl font-semibold tracking-tight sm:text-3xl">{tr(e.degree)}</h3>
+                    <p className="mt-1 text-signal">{tr(e.school)}</p>
+                    <p className="mt-4 max-w-xl leading-relaxed text-muted">{tr(e.description)}</p>
+                    <div className="mt-5 flex flex-wrap gap-2">
+                      {e.subjects.map((s) => (
+                        <span key={s.fr} className="chip">
+                          {tr(s)}
                         </span>
                       ))}
                     </div>
+                  </Reveal>
+                </li>
+              );
+            })}
+          </ol>
+
+          {/* Certifications */}
+          <div>
+            <Reveal>
+              <div className="label mb-5 flex items-center gap-2">
+                <Award size={14} className="text-signal" /> {t('edu.certs')}
+              </div>
+            </Reveal>
+            {certifications.map((c, i) => (
+              <Reveal key={c.title} delay={100 + i * 100}>
+                <a
+                  href={c.pdf}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group relative block overflow-hidden rounded-3xl bg-ink p-7 text-bg transition-transform duration-500 hover:-translate-y-1"
+                >
+                  <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-accent/30 blur-3xl transition-transform duration-700 group-hover:scale-150" />
+                  <div className="relative flex items-start justify-between">
+                    <span className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-[#111]">
+                      <Award size={22} />
+                    </span>
+                    <ArrowUpRight className="transition-transform duration-300 group-hover:rotate-45" />
                   </div>
-                </div>
-              </a>
+                  <h3 className="relative mt-8 text-2xl font-semibold tracking-tight">{c.title}</h3>
+                  <p className="relative mt-1 font-mono text-xs uppercase tracking-wider opacity-60">
+                    {c.issuer} · {tr(c.period)}
+                  </p>
+                  <p className="relative mt-4 leading-relaxed opacity-75">{tr(c.description)}</p>
+                  <div className="relative mt-5 flex flex-wrap gap-2">
+                    {c.skills.map((s) => (
+                      <span key={s} className="rounded-full border border-bg/20 px-3 py-1 font-mono text-[11px] opacity-80">
+                        {s}
+                      </span>
+                    ))}
+                  </div>
+                </a>
+              </Reveal>
             ))}
           </div>
         </div>
-
       </div>
     </section>
   );

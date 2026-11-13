@@ -1,115 +1,127 @@
-import { Github, Linkedin, Mail, ChevronDown, ArrowRight, Sparkles, Download } from 'lucide-react';
+import { ArrowDownRight, Download } from 'lucide-react';
+import { profile, projects } from '../data';
+import { useCountUp, useDakarTime, useInView, useTypewriter } from '../lib/hooks';
+import NeuralCanvas from './NeuralCanvas';
+import { scrollToId } from '../lib/nav';
+import { Magnetic } from './ui';
+import { useLang } from '../lib/i18n';
+import { useMemo } from 'react';
+
+function SplitLine({ text, delay, className = '' }: { text: string; delay: number; className?: string }) {
+  let n = 0;
+  return (
+    <span className={`block overflow-hidden pb-[0.08em] ${className}`} aria-hidden="true">
+      {text.split(' ').map((word, w, words) => (
+        <span key={w}>
+          <span className="inline-block whitespace-nowrap">
+            {word.split('').map((c, i) => (
+              <span key={i} className="inline-block animate-rise" style={{ animationDelay: `${delay + n++ * 35}ms` }}>
+                {c}
+              </span>
+            ))}
+          </span>
+          {w < words.length - 1 && ' '}
+        </span>
+      ))}
+    </span>
+  );
+}
+
+function Stat({ value, suffix = '', label, run }: { value: number; suffix?: string; label: string; run: boolean }) {
+  const n = useCountUp(value, run);
+  return (
+    <div>
+      <div className="text-3xl font-semibold tabular-nums sm:text-4xl">
+        {n}
+        <span className="text-signal">{suffix}</span>
+      </div>
+      <div className="label mt-1">{label}</div>
+    </div>
+  );
+}
 
 export default function Hero() {
-  const scrollTo = (id: string) =>
-    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  const { t, lang } = useLang();
+  const roles = useMemo(() => profile.roles.map((r) => r[lang]), [lang]);
+  const role = useTypewriter(roles);
+  const time = useDakarTime();
+  const [statsRef, statsIn] = useInView<HTMLDivElement>(0.3);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
-      {/* Dot grid */}
-      <div className="absolute inset-0 dot-grid opacity-40" />
+    <section id="top" className="grain relative flex min-h-[100svh] items-end overflow-hidden pb-14 pt-32 sm:pb-20">
+      <NeuralCanvas className="absolute inset-0 h-full w-full" />
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-bg/0 via-bg/30 to-bg" />
+      <div className="pointer-events-none absolute -right-40 -top-40 h-[520px] w-[520px] rounded-full bg-accent/10 blur-[120px]" />
 
-      {/* Radial glow center */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_50%_at_50%_-10%,rgba(124,58,237,0.15),transparent)]" />
-
-      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-
-        {/* Badge */}
-        <div className="animate-fade-in-1 flex justify-center mb-8">
-          <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-sm font-medium">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Disponible pour stage &amp; collaborations
+      <div className="container-x relative">
+        <div className="mb-8 flex flex-wrap items-center gap-3 animate-fade-up">
+          <span className="inline-flex items-center gap-2 rounded-full border border-line/15 bg-bg/60 px-3 py-1.5 text-xs font-medium backdrop-blur">
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+            </span>
+            {t('hero.available')}
+          </span>
+          <span className="label rounded-full border border-line/15 bg-bg/60 px-3 py-1.5 backdrop-blur">
+            Dakar · <span className="tabular-nums text-ink">{time}</span> GMT
           </span>
         </div>
 
-        {/* Name */}
-        <h1 className="animate-fade-in-2 font-bold leading-tight mb-6">
-          <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl text-white">
-            El Hadji Birane
+        <h1 className="text-[clamp(2.9rem,10vw,9rem)] font-semibold leading-[0.9] tracking-[-0.04em]">
+          <span className="sr-only">
+            {profile.firstName} {profile.lastName}
           </span>
-          <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl gradient-text mt-1">
-            Cisse Thiam
-          </span>
+          <SplitLine text={profile.firstName} delay={100} />
+          <SplitLine text={profile.lastName} delay={500} className="font-serif font-normal italic tracking-[-0.02em] text-signal" />
         </h1>
 
-        {/* Subtitle */}
-        <p className="animate-fade-in-2 text-lg sm:text-xl md:text-2xl text-gray-400 mb-3">
-          Étudiant en{' '}
-          <span className="text-violet-400 font-semibold">Intelligence Artificielle</span>
-          {' '}&amp;{' '}
-          <span className="text-cyan-400 font-semibold">Stratégie des Affaires</span>
-        </p>
-        <p className="animate-fade-in-2 text-gray-500 text-sm sm:text-base mb-12 flex items-center justify-center gap-2">
-          <Sparkles size={14} className="text-violet-500" />
-          Swiss UMEF Campus Dakar
-          <Sparkles size={14} className="text-cyan-500" />
-        </p>
+        <div className="mt-10 grid gap-10 lg:grid-cols-[1.2fr_1fr] lg:items-end">
+          <div className="animate-fade-up" style={{ animationDelay: '900ms' }}>
+            <p className="text-xl text-muted sm:text-2xl">
+              {t('hero.student')}{' '}
+              <span className="font-medium text-ink">
+                {role}
+                <span className="ml-0.5 inline-block w-[2px] animate-blink bg-signal align-[-0.1em]" style={{ height: '1em' }} />
+              </span>
+            </p>
+            <p className="mt-2 text-muted">
+              {t('hero.at')} {profile.school}
+            </p>
 
-        {/* Stats */}
-        <div className="animate-fade-in-3 flex justify-center gap-8 sm:gap-16 mb-12">
-          {[
-            { value: '+5', label: 'Projets' },
-            { value: '2+', label: "Ans d'études" },
-            { value: 'Dakar', label: 'Sénégal' },
-          ].map((s) => (
-            <div key={s.label} className="text-center">
-              <div className="text-2xl sm:text-3xl font-bold text-white">{s.value}</div>
-              <div className="text-xs sm:text-sm text-gray-500 mt-0.5">{s.label}</div>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Magnetic>
+                <button onClick={() => scrollToId('projects')} className="btn-primary group">
+                  {t('hero.cta')}
+                  <ArrowDownRight size={18} className="transition-transform duration-300 group-hover:rotate-[-45deg]" />
+                </button>
+              </Magnetic>
+              <Magnetic>
+                <a href={profile.cv} download={profile.cvName} className="btn-ghost">
+                  <Download size={17} /> {t('hero.cv')}
+                </a>
+              </Magnetic>
             </div>
-          ))}
-        </div>
+          </div>
 
-        {/* Social links */}
-        <div className="animate-fade-in-3 flex justify-center gap-3 mb-10">
-          {[
-            { href: 'mailto:biranethiam916@gmail.com', icon: <Mail size={18} />, label: 'Email' },
-            { href: 'https://github.com/BiraneThiam2', icon: <Github size={18} />, label: 'GitHub', external: true },
-            { href: 'https://www.linkedin.com/in/el-hadji-birane-cisse-thiam-1917a9336/', icon: <Linkedin size={18} />, label: 'LinkedIn', external: true },
-          ].map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              {...(link.external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-              className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl glass text-gray-300 hover:text-white hover:border-violet-500/40 transition-all duration-200 text-sm"
-            >
-              {link.icon}
-              <span className="hidden sm:block">{link.label}</span>
-            </a>
-          ))}
-        </div>
-
-        {/* CTA buttons */}
-        <div className="animate-fade-in-4 flex flex-col sm:flex-row justify-center gap-3">
-          <button
-            onClick={() => scrollTo('projects')}
-            className="group flex items-center justify-center gap-2 px-8 py-4 rounded-xl bg-gradient-to-r from-violet-600 to-cyan-600 text-white font-semibold shadow-lg shadow-violet-500/20 hover:shadow-violet-500/40 hover:scale-105 transition-all duration-200"
+          <div
+            ref={statsRef}
+            className="grid grid-cols-3 gap-6 border-t border-line/15 pt-6 animate-fade-up"
+            style={{ animationDelay: '1100ms' }}
           >
-            Voir mes projets
-            <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-          </button>
-          <a
-            href="/CV_ElHadjiBiraneCisseThiam.pdf"
-            download="CV_ElHadjiBiraneCisseThiam.pdf"
-            className="group flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass text-gray-300 hover:text-white hover:border-violet-500/40 font-semibold transition-all duration-200"
-          >
-            <Download size={18} className="group-hover:-translate-y-0.5 transition-transform" />
-            Mon CV
-          </a>
-          <button
-            onClick={() => scrollTo('contact')}
-            className="flex items-center justify-center gap-2 px-8 py-4 rounded-xl glass text-gray-300 hover:text-white hover:border-violet-500/40 font-semibold transition-all duration-200"
-          >
-            Me contacter
-          </button>
+            <Stat value={projects.length} suffix="+" label={t('hero.projects')} run={statsIn} />
+            <Stat value={2} suffix="+" label={t('hero.years')} run={statsIn} />
+            <Stat value={1} label={t('hero.certs')} run={statsIn} />
+          </div>
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-gray-600 hover:text-gray-400 transition-colors cursor-pointer"
-        onClick={() => scrollTo('about')}>
-        <span className="text-xs tracking-widest uppercase">Scroll</span>
-        <ChevronDown size={18} className="animate-bounce" />
-      </div>
+      <button
+        onClick={() => scrollToId('about')}
+        className="absolute bottom-6 right-6 hidden h-12 w-7 justify-center rounded-full border border-line/30 pt-2 sm:flex"
+        aria-label={t('hero.scroll')}
+      >
+        <span className="h-2 w-1 animate-scroll-dot rounded-full bg-ink" />
+      </button>
     </section>
   );
 }
